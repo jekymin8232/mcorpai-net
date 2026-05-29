@@ -11,8 +11,6 @@
 
 ### No tool can ever truly replace human beings.
 
-<img width="110" height="72" alt="한국 국기" src="https://github.com/user-attachments/assets/78c571b9-aa87-4161-956f-c08fcd845dd3" />
-
 **I'm a very kind Korean man. Please believe me. I'm not even married! I'm not a wild horse.**
 
 **Please, I beg you: if you are willing to be my friend, do not read this message. I want to keep my wild instincts hidden.**
