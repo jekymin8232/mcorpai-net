@@ -82,7 +82,7 @@ What is the name of your beloved pet? Is it Poppy? The code you created is nothi
 
 **The children of the newly rich should not learn about sexual desire before they learn compassion and respect for others. You can tell a lot about children by looking at their parents.**
 
-<img width="262" height="165" alt="일론 머스크" src="https://github.com/user-attachments/assets/18300a51-9faa-4b94-87f0-7f1a35913330" />
+<img width="287" height="175" alt="일론머스크" src="https://github.com/user-attachments/assets/ccf07733-577b-4b27-9076-d7dfe196edfd" />
 
 **Personally, I admire Elon Musk because there is a lot to learn from him. Elon Musk, You are my role model.**
 
