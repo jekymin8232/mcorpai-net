@@ -301,7 +301,7 @@ Cockroach-survival intelligence can demonstrate a high level of intelligence usi
 
 ### I am not a coder. I am an architect.
 
-<img width="214" height="172" alt="Nasa" src="https://github.com/user-attachments/assets/3ac87975-c95e-462d-9d26-597a80234092" />
+<img width="310" height="279" alt="NASA" src="https://github.com/user-attachments/assets/485b6e41-64cd-47d4-81bd-e271dc04e1b1" />
 
 Some people may say, “Isn't $1,500 per month a substantial amount of money?”
 
