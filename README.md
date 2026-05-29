@@ -376,12 +376,11 @@ South Korea has achieved remarkable success through industries such as semicondu
 
 **What matters most is human dignity. Patriotism can grow naturally only when that dignity is respected and protected.**
 
-<img width="330" height="166" alt="청와대" src="https://github.com/user-attachments/assets/820251b6-ea18-48ba-917f-f85d23450eda" />
-
 **South Korean politicians should ask themselves whether they truly deserve compensation of more than $100,000 per year. Many ordinary South Koreans struggle every day, and some find it difficult even to meet their tax obligations. Those who hold public office should lead by example and demonstrate that they are serving the public interest rather than their own.**
 
 ### South Korean politicians should lead by example when it comes to patriotism. 
-<img width="152" height="237" alt="로빈후드" src="https://github.com/user-attachments/assets/bb3ce6f3-0c6e-49f4-a414-84aa52093b43" />
+
+<img width="167" height="259" alt="로빈후드" src="https://github.com/user-attachments/assets/a4cb62d1-29ef-440d-b74f-21acff0dc705" />
 
 **Many people in South Korea are under severe financial pressure, with some finding it difficult even to pay their taxes. A fair annual salary for South Korean politicians would be $15,000. Even that is a generous estimate.**
 
