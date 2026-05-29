@@ -11,6 +11,8 @@
 
 ### No tool can ever truly replace human beings.
 
+<img width="192" height="128" alt="대한민국" src="https://github.com/user-attachments/assets/031ad4fc-1274-4faa-a76b-ab74c808b799" />
+
 **I'm a very kind Korean man. Please believe me. I'm not even married! I'm not a wild horse.**
 
 **Please, I beg you: if you are willing to be my friend, do not read this message. I want to keep my wild instincts hidden.**
@@ -360,7 +362,7 @@ South Korea has achieved remarkable success through industries such as semicondu
 
 **If South Korea relies on patriotism instead of providing fair opportunities and compensation, talented people will have little choice but to leave. Patriotism grows when people are treated fairly and rewarded justly. If patriotism is used as an excuse to deny fair compensation, the country risks losing its talent and retaining only a bureaucracy that serves itself rather than the future.**
 
-<img width="328" height="207" alt="대한민국" src="https://github.com/user-attachments/assets/242e1eb5-a9da-40be-a547-a189c7bb63f5" />
+<img width="397" height="248" alt="대한민국" src="https://github.com/user-attachments/assets/0ce9639c-c56d-4ff5-a30a-a1d516424442" />
 
 **South Korea is a liberal democracy, but it can also be seen as a country that places a strong emphasis on patriotism.**
 
@@ -375,6 +377,8 @@ South Korea has achieved remarkable success through industries such as semicondu
 **Before asking anything of the people of South Korea, South Korean politicians should first lead by example. Expecting patriotism from ordinary citizens while pursuing power and privilege for themselves is a contradiction. True leadership begins with demonstrating the values one asks others to uphold.**
 
 **What matters most is human dignity. Patriotism can grow naturally only when that dignity is respected and protected.**
+
+<img width="300" height="151" alt="청와대" src="https://github.com/user-attachments/assets/7ead4db2-ac85-4338-be84-e780902b3769" />
 
 **South Korean politicians should ask themselves whether they truly deserve compensation of more than $100,000 per year. Many ordinary South Koreans struggle every day, and some find it difficult even to meet their tax obligations. Those who hold public office should lead by example and demonstrate that they are serving the public interest rather than their own.**
 
