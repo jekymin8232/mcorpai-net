@@ -1,9 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Vitalguard-AI V5.2</title>
+</head>
+<body>
 <!--
-  Whitebox AI Document Editor — V4.0  (block module for existing index.html)
+  Vitalguard-AI — V5.2  (block module for existing index.html)
   Vanilla HTML + CSS + JS / ZERO external libraries / fully offline
-  No network transmission. All analysis is local & static (code never executed).
-  Mini-Git for activists: view/edit code, Hash & Validate, AI malware screen,
-  secure wipe, 7-language UI, PC/Mobile modes, foldable toolbar.
+  No hidden internet transmission. Editing, hashing and scanning are local; transfer starts only by explicit user action.
+  Mini-Git for activists: view/edit code, Hash & Validate, AI-style static scan,
+  SOS hold button, offline transfer fallbacks, danger monitor, secure wipe, 7-language UI.
 -->
 
 <style>
@@ -208,15 +217,54 @@
   .mlt-wrap.mlt-bi .mlt-cols{grid-template-columns:1fr;}
   .mlt-head{flex-direction:column;align-items:stretch;}
 }
+
+/* ===================== Vitalguard-AI V5.2 warm UX additions ===================== */
+.mlt-vg-sos{
+  border:2px solid #fff!important;background:#7f1d1d!important;color:#fff!important;
+  font-weight:900!important;box-shadow:0 0 0 3px rgba(127,29,29,.18);min-width:72px;
+}
+.mlt-vg-sos small{display:block;color:#ffe0dc;font-size:9px;line-height:1;margin-top:2px;}
+.mlt-vg-sos.mlt-holding{outline:4px solid rgba(192,57,43,.35);}
+.mlt-vg-status{font-size:11px;color:var(--mlt-muted);padding:6px 14px;background:#f6f1e6;border-bottom:1px solid var(--mlt-line);}
+.mlt-vg-status b{color:var(--mlt-ink)}
+.mlt-vg-card{border:1px solid var(--mlt-line);background:#fbfaf6;border-radius:12px;padding:12px;margin:10px 0;}
+.mlt-vg-card h4{margin:0 0 5px;font-size:13px;color:var(--mlt-ink);}
+.mlt-vg-card p{margin:0 0 8px;font-size:11.5px;color:var(--mlt-muted);line-height:1.55;}
+.mlt-vg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;}
+.mlt-vg-pill{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--mlt-line);border-radius:999px;padding:4px 9px;background:#fff;font-size:11px;color:var(--mlt-muted);}
+.mlt-vg-pill.ok{border-color:#cfe6cf;background:#eef8ee;color:var(--mlt-ok)}
+.mlt-vg-pill.warn{border-color:#ecdca8;background:#fff8e6;color:#8a6500}
+.mlt-vg-pill.bad{border-color:#efc1bd;background:#fff0ee;color:var(--mlt-hi)}
+.mlt-vg-num{width:78px;height:32px;border:1px solid var(--mlt-line);border-radius:7px;padding:0 8px;background:#fff;color:var(--mlt-ink);font-size:12px;}
+.mlt-vg-area{width:100%;min-height:110px;border:1px solid var(--mlt-line);border-radius:9px;padding:10px;background:#fff;color:var(--mlt-ink);font-family:'Courier New',monospace;font-size:12px;line-height:1.55;}
+.mlt-vg-preview{white-space:pre-wrap;word-break:break-word;max-height:220px;overflow:auto;border:1px solid var(--mlt-line);border-radius:9px;background:#fff;padding:10px;font-family:'Courier New',monospace;font-size:12px;color:#23201b;}
+.mlt-vg-sos-modal{border:2px solid #b5462f;background:#fff7f4;}
+.mlt-vg-sos-count{font-size:48px;font-weight:900;color:#7f1d1d;text-align:center;line-height:1;}
+.mlt-vg-meter{height:9px;background:#e4ded0;border-radius:999px;overflow:hidden;margin:8px 0;}
+.mlt-vg-meter i{display:block;height:100%;width:0;background:#7f1d1d;transition:width .1s linear;}
+.mlt-vg-kv{display:grid;grid-template-columns:120px 1fr;gap:4px 8px;font-size:12px;margin:7px 0;}
+.mlt-vg-kv b{color:var(--mlt-muted);font-weight:700;}
+.mlt-vg-modal-wide .mlt-card{max-width:760px;}
+.mlt-vg-danger-meter{height:12px;background:#e4ded0;border-radius:999px;overflow:hidden;}
+.mlt-vg-danger-meter i{display:block;height:100%;width:0;background:#b5462f;}
+.mlt-vg-bottom-sos{display:none;}
+@media(max-width:640px){
+  .mlt-vg-sos{width:100%;}
+  .mlt-vg-status{font-size:10.5px;}
+  .mlt-vg-bottom-sos{display:block;position:sticky;bottom:0;z-index:9998;padding:8px;background:rgba(251,250,246,.96);border-top:1px solid var(--mlt-line);}
+  .mlt-vg-bottom-sos .mlt-action{width:100%;justify-content:center;font-size:15px;padding:13px;}
+}
+@media(prefers-reduced-motion:reduce){.mlt-vg-meter i{transition:none}}
+
 </style>
 
 <div class="mlt-wrap" id="mltWrap">
 
   <div class="mlt-head">
     <div class="mlt-title">
-      <span data-i18n="title">Whitebox AI Document Editor</span>
-      <span style="font-weight:400;color:var(--mlt-muted);font-size:11px;">V4.0</span>
-      <small data-i18n="subtitle">Offline · zero-dependency · code never executed</small>
+      <span data-i18n="title">Vitalguard-AI</span>
+      <span style="font-weight:400;color:var(--mlt-muted);font-size:11px;">V5.2</span>
+      <small data-i18n="subtitle">Offline · local-first · code never auto-runs</small>
     </div>
     <div class="mlt-headright">
       <select class="mlt-langsel" id="mltLang" title="Language">
@@ -232,10 +280,15 @@
         <button class="mlt-seg mlt-on" id="mltDevPc" type="button" data-i18n="devPc">🖥 PC</button>
         <button class="mlt-seg" id="mltDevMobile" type="button" data-i18n="devMobile">📱 Mobile</button>
         <button class="mlt-seg" id="mltBiToggle" type="button" data-i18n="biToggle">🌐 EN·KO</button>
+        <button class="mlt-seg" id="mltHelpBtn" type="button" data-i18n="helpBtn">❔ Help</button>
+        <button class="mlt-seg" id="mltSosSetupBtn" type="button" data-i18n="sosSetupBtn">🧭 SOS setup</button>
+        <button class="mlt-seg mlt-vg-sos" id="mltSOSBtn" type="button" data-i18n="sosBtn">SOS<small>Hold 3s</small></button>
         <button class="mlt-seg" id="mltFoldBtn" type="button" data-i18n="fold">🔽 Collapse</button>
       </div>
     </div>
   </div>
+
+  <div class="mlt-vg-status" id="mltVgStatus" aria-live="polite"><b>Vitalguard-AI V5.2</b> · Offline local mode · Send/Receive/SOS only after explicit user action.</div>
 
   <div class="mlt-toolbar" id="mltToolbar">
     <button class="mlt-btn" data-cmd="undo" data-i18n-title="tUndo" title="Undo" type="button">↶</button>
@@ -315,18 +368,18 @@
   <div class="mlt-sizebar mlt-foldable" id="mltSizeBar">
     <label data-i18n="pageSizeLbl">📐 Page width</label>
     <input type="range" class="mlt-range" id="mltPageW" min="380" max="1400" step="10" value="820">
-    <span id="mltPageWVal" style="min-width:54px;">820 px</span>
+    <span id="mltPageWVal" style="min-width:54px;">820 px</span><input type="number" class="mlt-vg-num" id="mltPageWNum" min="380" max="1400" value="820" aria-label="Page width number">
     <span class="mlt-sep"></span>
     <label data-i18n="pageFsLbl">Body font</label>
     <input type="range" class="mlt-range" id="mltPageFs" min="12" max="30" step="1" value="16" style="width:120px;">
-    <span id="mltPageFsVal" style="min-width:42px;">16 px</span>
+    <span id="mltPageFsVal" style="min-width:42px;">16 px</span><input type="number" class="mlt-vg-num" id="mltPageFsNum" min="12" max="30" value="16" aria-label="Body font number">
     <span class="mlt-sep"></span>
     <button class="mlt-btn" id="mltPageReset" style="border:1px solid var(--mlt-line);background:#fff;" data-i18n="pageReset" type="button">Reset</button>
     <span class="mlt-sep"></span>
     <span class="mlt-scalebar">
       <label data-i18n="scaleLbl">🔍 Window</label>
       <input type="range" class="mlt-range" id="mltScale" min="70" max="160" step="5" value="100" style="width:120px;">
-      <span id="mltScaleVal" style="min-width:42px;">100%</span>
+      <span id="mltScaleVal" style="min-width:42px;">100%</span><input type="number" class="mlt-vg-num" id="mltScaleNum" min="70" max="160" value="100" aria-label="Window scale number">
     </span>
     <span class="mlt-sep"></span>
     <button class="mlt-btn" id="mltCodeToggle" style="border:1px solid var(--mlt-line);background:#fff;" data-i18n="codeView" type="button">⟨/⟩ Code view</button>
@@ -335,7 +388,7 @@
   <div class="mlt-imgbar" id="mltImgBar">
     <label data-i18n="imgSizeLbl">Image size</label>
     <input type="range" class="mlt-range" id="mltImgSize" min="10" max="100" value="100">
-    <span id="mltImgPct" style="min-width:38px;">100%</span>
+    <span id="mltImgPct" style="min-width:38px;">100%</span><input type="number" class="mlt-vg-num" id="mltImgSizeNum" min="10" max="100" value="100" aria-label="Image size number">
     <span class="mlt-sep"></span>
     <label data-i18n="alignLbl">Align</label>
     <button class="mlt-btn" data-img-align="left" data-i18n-title="tImgLeft" title="Left" type="button">⬅</button>
@@ -367,12 +420,16 @@
       <button class="mlt-action mlt-foldable" id="mltAiBtn" type="button" data-i18n="aiBtn">🤖 AI malware scan</button>
       <button class="mlt-action mlt-foldable" id="mltEyeBtn" type="button" data-i18n="eyeBtn">👁 Vision test</button>
       <button class="mlt-action" id="mltSendBtn" type="button" data-i18n="sendBtn">📡 Send message</button>
+      <button class="mlt-action" id="mltReceiveBtn" type="button" data-i18n="receiveBtn">📥 Receive</button>
+      <button class="mlt-action mlt-foldable" id="mltRelayBtn" type="button" data-i18n="relayBtn">🌐 Group relay</button>
+      <button class="mlt-action mlt-foldable" id="mltDangerBtn" type="button" data-i18n="dangerBtn">⚠️ Danger monitor</button>
       <button class="mlt-action mlt-foldable" id="mltCopyText" type="button" data-i18n="copyText">📋 Copy</button>
       <button class="mlt-action mlt-danger" id="mltWipeBtn" type="button" data-i18n="wipeBtn">🔥 Secure wipe</button>
     </div>
     <div class="mlt-stat" id="mltStat"></div>
   </div>
 </div>
+<div class="mlt-vg-bottom-sos"><button class="mlt-action mlt-danger" id="mltSOSBtnMobile" type="button">SOS · Hold 3s</button></div>
 
 <!-- 저장 형식 모달 -->
 <div class="mlt-modal" id="mltSaveModal"><div class="mlt-card">
@@ -482,6 +539,121 @@
     <button class="mlt-action" id="mltSendStop" type="button" data-i18n="sendStop" style="display:none;">Stop</button>
     <button class="mlt-action mlt-primary" id="mltSendClose" type="button" data-i18n="ok">OK</button>
   </div>
+</div></div>
+
+
+<!-- Vitalguard-AI V5.2 도움말 -->
+<div class="mlt-modal mlt-vg-modal-wide" id="mltHelpModal"><div class="mlt-card">
+  <h3 data-i18n="helpTitle">❔ Vitalguard-AI help</h3>
+  <div class="mlt-vg-card"><h4 data-i18n="helpQuickTitle">What this is</h4><p data-i18n="helpQuickBody">A warm-paper offline document editor plus local source review, hash verification, static risk scan, and explicit offline transfer tools. Received code is never executed automatically.</p></div>
+  <div class="mlt-vg-grid">
+    <div class="mlt-vg-card"><h4 data-i18n="helpWriteTitle">1. Write</h4><p data-i18n="helpWriteBody">Use the editor like the V4.2 letter editor. Save as sanitized HTML, TXT, or MD.</p></div>
+    <div class="mlt-vg-card"><h4 data-i18n="helpReviewTitle">2. Review code</h4><p data-i18n="helpReviewBody">Open HTML/TXT/MD/JS/CSS/JSON as text. Code view shows line numbers on a white background.</p></div>
+    <div class="mlt-vg-card"><h4 data-i18n="helpTransferTitle">3. Transfer</h4><p data-i18n="helpTransferBody">Use Bluetooth, ultrasound, manual code, file package, NFC, QR/visual, or local WebRTC where available. Every channel has limits.</p></div>
+    <div class="mlt-vg-card"><h4 data-i18n="helpSosTitle">4. SOS</h4><p data-i18n="helpSosBody">Set approved recipients first. Hold SOS for 3 seconds. SOS sends a tiny emergency code first, then sends a location update if browser location permission succeeds.</p></div>
+  </div>
+  <div class="mlt-disc" data-i18n="helpCaveat">This tool is local-first, not a cloud messenger, not Signal Protocol, and not a guaranteed forensic eraser. Browser APIs such as Bluetooth, NFC, microphone, camera, location, file deletion, and WebRTC vary by device and require explicit user action.</div>
+  <div class="mlt-foot2"><button class="mlt-action mlt-primary" id="mltHelpClose" type="button" data-i18n="ok">OK</button></div>
+</div></div>
+
+<!-- 수신 / 안전 미리보기 -->
+<div class="mlt-modal mlt-vg-modal-wide" id="mltReceiveModal"><div class="mlt-card">
+  <h3 data-i18n="receiveTitle">📥 Receive / safe import</h3>
+  <p data-i18n="receiveDesc">Paste a VG code or imported package. The content is shown as text first, then you can hash, scan, insert, or discard it.</p>
+  <div class="mlt-vg-card">
+    <h4 data-i18n="manualCodeTitle">Manual code / package</h4>
+    <textarea class="mlt-vg-area" id="mltRxCode" placeholder="VG52..."></textarea>
+    <div class="mlt-row" style="margin-top:8px;">
+      <button class="mlt-action mlt-primary" id="mltRxDecode" type="button" data-i18n="decodeBtn">Decode safely</button>
+      <button class="mlt-action" id="mltRxStartMic" type="button" data-i18n="startAcousticRx">Start acoustic listener</button>
+      <button class="mlt-action" id="mltRxStopMic" type="button" data-i18n="stop">Stop</button>
+    </div>
+    <div id="mltRxStatus" class="mlt-sndstatus"></div>
+  </div>
+  <div class="mlt-vg-card">
+    <h4 data-i18n="rxPreviewTitle">Received preview</h4>
+    <pre class="mlt-vg-preview" id="mltRxPreview"></pre>
+    <div class="mlt-row" style="margin-top:8px;">
+      <button class="mlt-action" id="mltRxHash" type="button" data-i18n="hashReceived">Hash received</button>
+      <button class="mlt-action" id="mltRxScan" type="button" data-i18n="scanReceived">Scan received</button>
+      <button class="mlt-action mlt-primary" id="mltRxInsert" type="button" data-i18n="insertPlain">Insert plain text</button>
+      <button class="mlt-action" id="mltRxSource" type="button" data-i18n="insertSource">Insert as source</button>
+      <button class="mlt-action" id="mltRxDiscard" type="button" data-i18n="discard">Discard</button>
+    </div>
+  </div>
+  <div class="mlt-foot2"><button class="mlt-action mlt-primary" id="mltReceiveClose" type="button" data-i18n="ok">OK</button></div>
+</div></div>
+
+<!-- Group Relay -->
+<div class="mlt-modal mlt-vg-modal-wide" id="mltRelayModal"><div class="mlt-card">
+  <h3 data-i18n="relayTitle">🌐 Approved group relay</h3>
+  <p data-i18n="relayDesc">Create or join a consent-based group. Relay is off unless you explicitly allow it.</p>
+  <div class="mlt-vg-grid">
+    <div class="mlt-vg-card"><h4 data-i18n="relayGroupTitle">Group</h4>
+      <div class="mlt-row"><label data-i18n="groupIdLbl">Group ID</label><input class="mlt-vg-num" id="mltGroupId" value="1001" inputmode="numeric"><label><input type="checkbox" id="mltRelayAllow"> <span data-i18n="allowRelay">Allow relay</span></label></div>
+      <div class="mlt-row" style="margin-top:8px;"><button class="mlt-action mlt-primary" id="mltGroupCreate" type="button" data-i18n="createGroup">Create invite</button><button class="mlt-action" id="mltGroupJoin" type="button" data-i18n="joinGroup">Join from code</button></div>
+    </div>
+    <div class="mlt-vg-card"><h4 data-i18n="coverageTitle">Coverage estimator</h4>
+      <div class="mlt-vg-kv"><b data-i18n="peopleLbl">People</b><input class="mlt-vg-num" id="mltRelayPeople" value="10" inputmode="numeric"><b data-i18n="hopLbl">Hop range</b><input class="mlt-vg-num" id="mltRelayRange" value="30" inputmode="numeric"></div>
+      <button class="mlt-action" id="mltEstimateRelay" type="button" data-i18n="estimateBtn">Estimate</button><div id="mltRelayEstimate" class="mlt-sndstatus"></div>
+    </div>
+  </div>
+  <div class="mlt-vg-card"><h4 data-i18n="relayLogTitle">Relay log</h4><div id="mltRelayLog" class="mlt-vg-preview"></div></div>
+  <div class="mlt-disc" data-i18n="relayCaveat">Relay increases delivery probability; it does not guarantee delivery. Large documents should use .vgpack, visual codes, WebRTC, or file handoff instead of raw ultrasound.</div>
+  <div class="mlt-foot2"><button class="mlt-action mlt-primary" id="mltRelayClose" type="button" data-i18n="ok">OK</button></div>
+</div></div>
+
+<!-- Danger Monitor -->
+<div class="mlt-modal mlt-vg-modal-wide" id="mltDangerModal"><div class="mlt-card">
+  <h3 data-i18n="dangerTitle">⚠️ Danger sound monitor</h3>
+  <p data-i18n="dangerDesc">Uses the microphone only after you press Start. It estimates sudden loud sound candidates locally; it does not record or upload audio.</p>
+  <div class="mlt-vg-card">
+    <div class="mlt-row"><button class="mlt-action mlt-primary" id="mltDangerStart" type="button" data-i18n="startMonitor">Start monitor</button><button class="mlt-action" id="mltDangerStop" type="button" data-i18n="stop">Stop</button><button class="mlt-action" id="mltDangerAlert" type="button" data-i18n="sendAlertCode">Create alert code</button></div>
+    <div class="mlt-vg-danger-meter"><i id="mltDangerBar"></i></div>
+    <div id="mltDangerStatus" class="mlt-sndstatus"></div>
+  </div>
+  <div class="mlt-disc" data-i18n="dangerCaveat">A phone microphone is not a calibrated sound meter. This is only a candidate detector for sudden loud/impulse sound, not proof of gunfire or danger.</div>
+  <div class="mlt-foot2"><button class="mlt-action mlt-primary" id="mltDangerClose" type="button" data-i18n="ok">OK</button></div>
+</div></div>
+
+<!-- SOS setup -->
+<div class="mlt-modal mlt-vg-modal-wide" id="mltSosSetupModal"><div class="mlt-card">
+  <h3 data-i18n="sosSetupTitle">🧭 SOS setup</h3>
+  <p data-i18n="sosSetupDesc">SOS is not active until you set a group/recipient. Hold the SOS button for 3 seconds to send. Release early to cancel.</p>
+  <div class="mlt-vg-grid">
+    <div class="mlt-vg-card"><h4 data-i18n="sosRecipientsTitle">Approved recipients</h4><textarea class="mlt-vg-area" id="mltSosRecipients" placeholder="Group A / trusted people"></textarea></div>
+    <div class="mlt-vg-card"><h4 data-i18n="sosLocationTitle">Location mode</h4><select id="mltSosLocMode" class="mlt-select"><option value="coarse">Coarse when available</option><option value="exact">Exact when available</option><option value="manual">Manual only</option><option value="none">No location</option></select><textarea class="mlt-vg-area" id="mltManualLocation" placeholder="Manual location code / landmark"></textarea></div>
+  </div>
+  <div class="mlt-row"><button class="mlt-action mlt-primary" id="mltSosSave" type="button" data-i18n="saveSosSetup">Save SOS setup</button><button class="mlt-action" id="mltSosTest" type="button" data-i18n="testSos">Create test SOS</button></div>
+  <div id="mltSosSetupStatus" class="mlt-sndstatus"></div>
+  <div class="mlt-foot2"><button class="mlt-action mlt-primary" id="mltSosSetupClose" type="button" data-i18n="ok">OK</button></div>
+</div></div>
+
+<!-- SOS fired / code output -->
+<div class="mlt-modal mlt-vg-modal-wide" id="mltSosFireModal"><div class="mlt-card mlt-vg-sos-modal">
+  <h3 data-i18n="sosFireTitle">SOS package created</h3>
+  <p data-i18n="sosFireDesc">Share this emergency code with approved people. If ultrasound is available, a tiny SOS tone was attempted. Location may arrive as an update if permission succeeds.</p>
+  <div class="mlt-vg-kv"><b>State</b><span id="mltSosFireState"></span><b>Location</b><span id="mltSosFireLoc"></span><b>Channels</b><span id="mltSosFireChannels"></span></div>
+  <textarea class="mlt-vg-area" id="mltSosCode" readonly></textarea>
+  <div class="mlt-row"><button class="mlt-action" id="mltSosCopy" type="button" data-i18n="copyCode">Copy code</button><button class="mlt-action" id="mltSosTryBt" type="button" data-i18n="tryBluetooth">Try Bluetooth</button><button class="mlt-action" id="mltSosSavePack" type="button" data-i18n="saveVgPack">Save .vgpack</button></div>
+  <div class="mlt-foot2"><button class="mlt-action mlt-primary" id="mltSosFireClose" type="button" data-i18n="ok">OK</button></div>
+</div></div>
+
+<!-- SOS hold overlay -->
+<div class="mlt-modal" id="mltSosHoldModal"><div class="mlt-card mlt-vg-sos-modal">
+  <h3 data-i18n="sosHoldTitle">Hold to send SOS</h3>
+  <div class="mlt-vg-sos-count" id="mltSosCountdown">3</div>
+  <div class="mlt-vg-meter"><i id="mltSosHoldBar"></i></div>
+  <p data-i18n="sosHoldDesc">Keep holding for 3 seconds. Release before the bar fills to cancel.</p>
+</div></div>
+
+<!-- Panic Decommission -->
+<div class="mlt-modal mlt-vg-modal-wide" id="mltPanicModal"><div class="mlt-card">
+  <h3 data-i18n="panicTitle">🔥 Panic decommission</h3>
+  <p data-i18n="panicDesc">Clears the current document, inbox/outbox, transfer buffers, microphone references, and local working state. A 4-digit PIN prevents accidental use. This is not guaranteed forensic deletion.</p>
+  <div class="mlt-row"><input class="mlt-vg-num" id="mltPanicPin" maxlength="4" inputmode="numeric" placeholder="PIN"><button class="mlt-action mlt-danger" id="mltPanicRun" type="button" data-i18n="runPanic">YES — run</button><button class="mlt-action" id="mltPanicCancel" type="button" data-i18n="cancel">Cancel</button></div>
+  <div id="mltPanicStatus" class="mlt-sndstatus"></div>
+  <div class="mlt-disc" data-i18n="panicCaveat">Browsers normally cannot silently delete the HTML file they are running from. Manual deletion may still be required.</div>
 </div></div>
 
 <div class="mlt-toast" id="mltToast"></div>
@@ -885,6 +1057,34 @@
       rulesList:["Transmission externe (fetch/XHR/WebSocket)","Exécution dynamique (eval/Function)","Injection DOM (innerHTML/document.write)","Obfuscation (atob/escape/séquences \\x)","Redirection automatique (location/window.open)","Gestionnaires en ligne / javascript:","Stockage local (localStorage/IndexedDB/cookie)","Mineur/domaines suspects"]
     }
   };
+
+  /* ===================== Vitalguard-AI V5.2 i18n extension ===================== */
+  var VG52_I18N={
+    en:{
+      title:"Vitalguard-AI", subtitle:"Offline · local-first · code never auto-runs", helpBtn:"❔ Help", sosSetupBtn:"🧭 SOS setup", sosBtn:"SOS\nHold 3s", receiveBtn:"📥 Receive", relayBtn:"🌐 Group relay", dangerBtn:"⚠️ Danger monitor",
+      helpTitle:"❔ Vitalguard-AI help", helpQuickTitle:"What this is", helpQuickBody:"A warm-paper offline document editor plus local source review, hash verification, static risk scan, and explicit offline transfer tools. Received code is never executed automatically.", helpWriteTitle:"1. Write", helpWriteBody:"Use the editor like the V4.2 letter editor. Save as sanitized HTML, TXT, or MD.", helpReviewTitle:"2. Review code", helpReviewBody:"Open HTML/TXT/MD/JS/CSS/JSON as text. Code view shows line numbers on a white background.", helpTransferTitle:"3. Transfer", helpTransferBody:"Use Bluetooth, ultrasound, manual code, file package, NFC, QR/visual, or local WebRTC where available. Every channel has limits.", helpSosTitle:"4. SOS", helpSosBody:"Set approved recipients first. Hold SOS for 3 seconds. SOS sends a tiny emergency code first, then sends a location update if browser location permission succeeds.", helpCaveat:"This tool is local-first, not a cloud messenger, not Signal Protocol, and not a guaranteed forensic eraser. Browser APIs such as Bluetooth, NFC, microphone, camera, location, file deletion, and WebRTC vary by device and require explicit user action.",
+      receiveTitle:"📥 Receive / safe import", receiveDesc:"Paste a VG code or imported package. The content is shown as text first, then you can hash, scan, insert, or discard it.", manualCodeTitle:"Manual code / package", decodeBtn:"Decode safely", startAcousticRx:"Start acoustic listener", stop:"Stop", rxPreviewTitle:"Received preview", hashReceived:"Hash received", scanReceived:"Scan received", insertPlain:"Insert plain text", insertSource:"Insert as source", discard:"Discard",
+      relayTitle:"🌐 Approved group relay", relayDesc:"Create or join a consent-based group. Relay is off unless you explicitly allow it.", relayGroupTitle:"Group", groupIdLbl:"Group ID", allowRelay:"Allow relay", createGroup:"Create invite", joinGroup:"Join from code", coverageTitle:"Coverage estimator", peopleLbl:"People", hopLbl:"Hop range", estimateBtn:"Estimate", relayLogTitle:"Relay log", relayCaveat:"Relay increases delivery probability; it does not guarantee delivery. Large documents should use .vgpack, visual codes, WebRTC, or file handoff instead of raw ultrasound.",
+      dangerTitle:"⚠️ Danger sound monitor", dangerDesc:"Uses the microphone only after you press Start. It estimates sudden loud sound candidates locally; it does not record or upload audio.", startMonitor:"Start monitor", sendAlertCode:"Create alert code", dangerCaveat:"A phone microphone is not a calibrated sound meter. This is only a candidate detector for sudden loud/impulse sound, not proof of gunfire or danger.",
+      sosSetupTitle:"🧭 SOS setup", sosSetupDesc:"SOS is not active until you set a group/recipient. Hold the SOS button for 3 seconds to send. Release early to cancel.", sosRecipientsTitle:"Approved recipients", sosLocationTitle:"Location mode", saveSosSetup:"Save SOS setup", testSos:"Create test SOS", sosFireTitle:"SOS package created", sosFireDesc:"Share this emergency code with approved people. If ultrasound is available, a tiny SOS tone was attempted. Location may arrive as an update if permission succeeds.", copyCode:"Copy code", tryBluetooth:"Try Bluetooth", saveVgPack:"Save .vgpack", sosHoldTitle:"Hold to send SOS", sosHoldDesc:"Keep holding for 3 seconds. Release before the bar fills to cancel.",
+      panicTitle:"🔥 Panic decommission", panicDesc:"Clears the current document, inbox/outbox, transfer buffers, microphone references, and local working state. A 4-digit PIN prevents accidental use. This is not guaranteed forensic deletion.", runPanic:"YES — run", panicCaveat:"Browsers normally cannot silently delete the HTML file they are running from. Manual deletion may still be required."
+    },
+    ko:{
+      title:"Vitalguard-AI", subtitle:"오프라인 · 로컬 우선 · 코드는 자동 실행 안 함", helpBtn:"❔ 도움말", sosSetupBtn:"🧭 SOS 설정", sosBtn:"SOS\n3초 누르기", receiveBtn:"📥 받기", relayBtn:"🌐 그룹 릴레이", dangerBtn:"⚠️ 위험 감지",
+      helpTitle:"❔ Vitalguard-AI 도움말", helpQuickTitle:"이 도구는 무엇인가", helpQuickBody:"V4.2의 따뜻한 편지지형 문서 편집기에 로컬 코드 검토, 해시 검증, 정적 위험 검사, 명시적 오프라인 전송 기능을 더한 도구입니다. 받은 코드는 자동 실행하지 않습니다.", helpWriteTitle:"1. 문서 작성", helpWriteBody:"V4.2 편집기처럼 글을 쓰고, 안전 정리된 HTML/TXT/MD로 저장합니다.", helpReviewTitle:"2. 코드 검토", helpReviewBody:"HTML/TXT/MD/JS/CSS/JSON을 텍스트로 열어 흰 배경 줄 번호 코드 보기로 확인합니다.", helpTransferTitle:"3. 전송", helpTransferBody:"Bluetooth, 초음파, 수동 코드, 파일 패키지, NFC, QR/시각 코드, 로컬 WebRTC를 가능한 경우 사용합니다. 모든 채널에는 한계가 있습니다.", helpSosTitle:"4. SOS", helpSosBody:"승인된 상대를 먼저 설정합니다. SOS를 3초간 누르면 작은 긴급 코드를 먼저 보내고, 위치 권한이 성공하면 위치 업데이트를 추가로 보냅니다.", helpCaveat:"이 도구는 로컬 우선 도구이며 클라우드 메신저, Signal Protocol, 완전한 포렌식 삭제기가 아닙니다. Bluetooth, NFC, 마이크, 카메라, 위치, 파일 삭제, WebRTC는 기기마다 다르고 사용자 명시 동작이 필요합니다.",
+      receiveTitle:"📥 받기 / 안전 가져오기", receiveDesc:"VG 코드나 패키지를 붙여넣으세요. 먼저 텍스트로 미리보고 해시, 검사, 삽입, 폐기를 선택합니다.", manualCodeTitle:"수동 코드 / 패키지", decodeBtn:"안전하게 해독", startAcousticRx:"초음파 수신 시작", stop:"중지", rxPreviewTitle:"수신 미리보기", hashReceived:"수신 내용 해시", scanReceived:"수신 내용 검사", insertPlain:"일반 텍스트 삽입", insertSource:"소스 코드로 삽입", discard:"폐기",
+      relayTitle:"🌐 승인형 그룹 릴레이", relayDesc:"동의 기반 그룹을 만들거나 참여합니다. 릴레이는 사용자가 명시적으로 허용해야 켜집니다.", relayGroupTitle:"그룹", groupIdLbl:"그룹 ID", allowRelay:"릴레이 허용", createGroup:"초대 코드 생성", joinGroup:"코드로 참여", coverageTitle:"전파 거리 추정", peopleLbl:"인원", hopLbl:"1회 거리", estimateBtn:"계산", relayLogTitle:"릴레이 기록", relayCaveat:"릴레이는 전달 확률을 높이지만 보장하지 않습니다. 긴 문서는 원본 초음파보다 .vgpack, 시각 코드, WebRTC, 파일 전달을 사용하세요.",
+      dangerTitle:"⚠️ 위험 소리 감지", dangerDesc:"시작 버튼을 누른 뒤에만 마이크를 사용합니다. 갑작스러운 큰 소리 후보를 로컬에서 추정하며 녹음/업로드하지 않습니다.", startMonitor:"감지 시작", sendAlertCode:"경고 코드 생성", dangerCaveat:"휴대폰 마이크는 보정된 소음계가 아닙니다. 이것은 갑작스러운 큰 소리/충격음 후보 감지일 뿐 총성이나 위험의 증명이 아닙니다.",
+      sosSetupTitle:"🧭 SOS 설정", sosSetupDesc:"그룹/상대를 설정하기 전에는 SOS가 활성화되지 않습니다. SOS 버튼을 3초 누르면 전송되고, 3초 전에 손을 떼면 취소됩니다.", sosRecipientsTitle:"승인된 상대", sosLocationTitle:"위치 모드", saveSosSetup:"SOS 설정 저장", testSos:"테스트 SOS 만들기", sosFireTitle:"SOS 패키지 생성됨", sosFireDesc:"승인된 사람에게 이 긴급 코드를 공유하세요. 가능하면 작은 SOS 초음파 전송도 시도합니다. 위치 권한이 성공하면 위치 업데이트가 추가됩니다.", copyCode:"코드 복사", tryBluetooth:"블루투스 시도", saveVgPack:".vgpack 저장", sosHoldTitle:"SOS 전송 대기", sosHoldDesc:"3초 동안 계속 누르세요. 막대가 차기 전 손을 떼면 취소됩니다.",
+      panicTitle:"🔥 긴급 폐기", panicDesc:"현재 문서, 수신/발신함, 전송 버퍼, 마이크 참조, 로컬 작업 상태를 지웁니다. 4자리 PIN은 실수 방지용이며 완전한 포렌식 삭제 보장은 아닙니다.", runPanic:"YES — 실행", panicCaveat:"브라우저는 보통 실행 중인 HTML 파일 자체를 조용히 삭제할 수 없습니다. 수동 삭제가 여전히 필요할 수 있습니다."
+    }
+  };
+  Object.keys(I18N).forEach(function(k){
+    var base=VG52_I18N.en, local=VG52_I18N[k]||{};
+    Object.keys(base).forEach(function(key){ if(I18N[k][key]===undefined) I18N[k][key]=(local[key]!==undefined?local[key]:base[key]); });
+    I18N[k].title=(local.title||base.title); I18N[k].subtitle=(local.subtitle||base.subtitle);
+  });
+
   var lang="en";
   function t(k){ var L=I18N[lang]||I18N.en; return (L[k]!==undefined)?L[k]:(I18N.en[k]!==undefined?I18N.en[k]:k); }
 
@@ -1539,6 +1739,188 @@
     $("mltSendProg").classList.add("show"); return next();
   }
 
+
+
+  /* ===================== Vitalguard-AI V5.2 warm UX + SOS extension ===================== */
+  var vgState={
+    inbox:[], outbox:[], lastReceivedText:"", lastPackage:null,
+    sos:{recipients:"", locMode:"coarse", manualLocation:"", ready:false, lastSentAt:0},
+    relay:{groupId:"1001", allow:false, log:[]},
+    danger:{stream:null, ctx:null, analyser:null, raf:0, baseline:0, max:0, running:false}
+  };
+
+  function vgSafeText(s){ return (s==null?"":String(s)); }
+  function vgRand32(){ var a=new Uint32Array(1); if(window.crypto&&crypto.getRandomValues){ crypto.getRandomValues(a); return a[0]>>>0; } return Math.floor(Math.random()*0xFFFFFFFF)>>>0; }
+  function vgBase64UrlEncode(str){
+    var bin=unescape(encodeURIComponent(str));
+    var b64=btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
+    return b64;
+  }
+  function vgBase64UrlDecode(s){
+    s=String(s||"").trim().replace(/\s+/g,"").replace(/-/g,"+").replace(/_/g,"/");
+    while(s.length%4) s+="=";
+    return decodeURIComponent(escape(atob(s)));
+  }
+  function vgMakePackage(kind,text,meta){
+    var bytes=toBytes(text||"");
+    return {type:"vitalguard-vgpack", version:"5.2", kind:kind||"message", msgId:vgRand32(), createdAt:new Date().toISOString(), bytes:bytes.length, crc16:crc16(bytes), text:text||"", meta:meta||{}};
+  }
+  function vgEncodePackage(pkg){ return "VG52."+vgBase64UrlEncode(JSON.stringify(pkg)); }
+  function vgDecodePackage(code){
+    code=String(code||"").trim();
+    if(!code) throw new Error("empty");
+    if(code.indexOf("VG52.")===0) return JSON.parse(vgBase64UrlDecode(code.slice(5)));
+    if(code[0]==="{") return JSON.parse(code);
+    throw new Error("unknown-format");
+  }
+  function vgDownload(name, content, type){
+    var blob=new Blob([content],{type:type||"text/plain;charset=utf-8"});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); },1000);
+  }
+  function vgSetStatus(msg){ var s=$("mltVgStatus"); if(s) s.innerHTML='<b>Vitalguard-AI V5.2</b> · '+msg; }
+  function vgHumanBytes(n){ return n<1024?n+" B":(n/1024).toFixed(1)+" KB"; }
+  function vgEstimateUltrasoundSeconds(text){
+    var bytes=toBytes(text||"").length, frame=18, guard=2.8, ack=2.0;
+    var raw=(bytes+frame)*8/BAUD;
+    return {bytes:bytes, raw:raw, confirm:Math.ceil(raw+guard+ack)};
+  }
+  function vgRefreshTransferEstimate(){
+    var e=vgEstimateUltrasoundSeconds(curText());
+    var el=$("mltVgStatus");
+    if(el) el.title="Ultrasound estimate for current document: "+e.bytes+" bytes, about "+e.confirm+"s with safety margin.";
+  }
+
+  function vgBindNumber(rangeId,numId,onApply){
+    var r=$(rangeId), n=$(numId); if(!r||!n) return;
+    n.value=r.value;
+    r.addEventListener("input",function(){ n.value=r.value; if(onApply) onApply(); });
+    n.addEventListener("change",function(){ var min=Number(n.min||r.min||0), max=Number(n.max||r.max||9999), v=Number(n.value||r.value); if(isNaN(v)) v=Number(r.value); v=Math.max(min,Math.min(max,v)); n.value=v; r.value=v; if(onApply) onApply(); });
+  }
+  vgBindNumber("mltPageW","mltPageWNum",applyPageW);
+  vgBindNumber("mltPageFs","mltPageFsNum",applyPageFs);
+  vgBindNumber("mltScale","mltScaleNum",function(){ var ev=new Event("input"); $("mltScale").dispatchEvent(ev); });
+  vgBindNumber("mltImgSize","mltImgSizeNum",function(){ var ev=new Event("input"); $("mltImgSize").dispatchEvent(ev); });
+  if($("mltImgSize")){ $("mltImgSize").addEventListener("input",function(){ if($("mltImgSizeNum")) $("mltImgSizeNum").value=this.value; }); }
+
+  function vgOpenHelp(){ openModal("mltHelpModal"); }
+  $("mltHelpBtn").addEventListener("click",vgOpenHelp);
+  $("mltHelpClose").addEventListener("click",function(){ closeModal("mltHelpModal"); });
+
+  /* Receive / safe import */
+  $("mltReceiveBtn").addEventListener("click",function(){ openModal("mltReceiveModal"); });
+  $("mltReceiveClose").addEventListener("click",function(){ closeModal("mltReceiveModal"); });
+  $("mltRxDecode").addEventListener("click",function(){
+    try{
+      var pkg=vgDecodePackage($("mltRxCode").value); vgState.lastPackage=pkg; vgState.lastReceivedText=vgSafeText(pkg.text);
+      $("mltRxPreview").textContent=vgState.lastReceivedText;
+      $("mltRxStatus").textContent="Decoded "+(pkg.kind||"message")+" · "+vgHumanBytes(toBytes(vgState.lastReceivedText).length)+" · CRC16 "+pkg.crc16;
+      vgState.inbox.push(pkg); vgSetStatus("Received package decoded safely as text.");
+    }catch(e){ $("mltRxStatus").textContent="Decode failed: "+e.message; }
+  });
+  $("mltRxHash").addEventListener("click",function(){ if(!vgState.lastReceivedText){ showToast("No received text"); return; } openModal("mltHashModal"); runHash(toBytes(vgState.lastReceivedText)); });
+  $("mltRxScan").addEventListener("click",function(){ if(!vgState.lastReceivedText){ showToast("No received text"); return; } var old=sheetA.innerText; sheetA.textContent=vgState.lastReceivedText; closeModal("mltReceiveModal"); openModal("mltAiModal"); runScan(); setTimeout(function(){ sheetA.textContent=old; updateStat(); },50); });
+  $("mltRxInsert").addEventListener("click",function(){ if(!vgState.lastReceivedText) return; activeSheet.focus(); document.execCommand("insertText",false,vgState.lastReceivedText); updateStat(); showToast("Inserted received text"); });
+  $("mltRxSource").addEventListener("click",function(){ if(!vgState.lastReceivedText) return; var pre=document.createElement("pre"); pre.style.cssText="white-space:pre-wrap;word-break:break-word;font-family:'Courier New',monospace;font-size:13px;line-height:1.55;margin:0;"; pre.textContent=vgState.lastReceivedText; activeSheet.appendChild(pre); updateStat(); showToast("Inserted as source"); });
+  $("mltRxDiscard").addEventListener("click",function(){ vgState.lastReceivedText=""; vgState.lastPackage=null; $("mltRxPreview").textContent=""; $("mltRxCode").value=""; $("mltRxStatus").textContent="Discarded."; });
+
+  var vgRxMic={stream:null,ctx:null,analyser:null,raf:0};
+  $("mltRxStartMic").addEventListener("click",function(){
+    if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){ $("mltRxStatus").textContent="Microphone API unavailable. Use manual code."; return; }
+    $("mltRxStatus").textContent="Requesting microphone. Acoustic receive uses local analysis only.";
+    navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}}).then(function(stream){
+      vgRxMic.stream=stream; vgRxMic.ctx=new (window.AudioContext||window.webkitAudioContext)(); vgRxMic.analyser=vgRxMic.ctx.createAnalyser(); vgRxMic.analyser.fftSize=2048;
+      var src=vgRxMic.ctx.createMediaStreamSource(stream); src.connect(vgRxMic.analyser);
+      var data=new Uint8Array(vgRxMic.analyser.frequencyBinCount);
+      (function loop(){ vgRxMic.analyser.getByteFrequencyData(data); var peak=0,idx=0; for(var i=0;i<data.length;i++){ if(data[i]>peak){peak=data[i];idx=i;} } var freq=idx*vgRxMic.ctx.sampleRate/vgRxMic.analyser.fftSize; $("mltRxStatus").textContent="Listening… peak "+Math.round(freq)+" Hz / "+peak+". Full FSK decode depends on device calibration; manual VG code remains safest."; vgRxMic.raf=requestAnimationFrame(loop); })();
+    }).catch(function(err){ $("mltRxStatus").textContent="Microphone denied or unavailable: "+err.message; });
+  });
+  $("mltRxStopMic").addEventListener("click",function(){ if(vgRxMic.raf) cancelAnimationFrame(vgRxMic.raf); if(vgRxMic.stream) vgRxMic.stream.getTracks().forEach(function(tr){tr.stop();}); vgRxMic={stream:null,ctx:null,analyser:null,raf:0}; $("mltRxStatus").textContent="Acoustic listener stopped."; });
+
+  /* Relay */
+  $("mltRelayBtn").addEventListener("click",function(){ $("mltGroupId").value=vgState.relay.groupId; $("mltRelayAllow").checked=vgState.relay.allow; openModal("mltRelayModal"); });
+  $("mltRelayClose").addEventListener("click",function(){ closeModal("mltRelayModal"); });
+  function vgRelayLog(msg){ vgState.relay.log.unshift(new Date().toLocaleTimeString()+" · "+msg); vgState.relay.log=vgState.relay.log.slice(0,20); $("mltRelayLog").textContent=vgState.relay.log.join("\n"); }
+  $("mltGroupCreate").addEventListener("click",function(){ vgState.relay.groupId=$("mltGroupId").value||String(vgRand32()%9999); vgState.relay.allow=$("mltRelayAllow").checked; var pkg=vgMakePackage("group-invite","Join Vitalguard-AI group "+vgState.relay.groupId,{groupId:vgState.relay.groupId,relayAllowed:vgState.relay.allow}); var code=vgEncodePackage(pkg); $("mltRelayLog").textContent=code; vgRelayLog("Created group invite. Share the VG52 code with approved people."); });
+  $("mltGroupJoin").addEventListener("click",function(){ var code=prompt("Paste group invite code"); if(!code) return; try{ var pkg=vgDecodePackage(code); vgState.relay.groupId=(pkg.meta&&pkg.meta.groupId)||vgState.relay.groupId; $("mltGroupId").value=vgState.relay.groupId; vgRelayLog("Joined group "+vgState.relay.groupId+" from invite."); }catch(e){ vgRelayLog("Join failed: "+e.message); } });
+  $("mltEstimateRelay").addEventListener("click",function(){ var people=Math.max(1,Number($("mltRelayPeople").value)||1), range=Math.max(1,Number($("mltRelayRange").value)||30); var maxLine=people*range; var redundancy=Math.min(0.95,0.35+Math.log(people+1)/4); $("mltRelayEstimate").textContent="Rough line coverage: "+maxLine+"m if spaced ideally. Redundant path chance: "+Math.round(redundancy*100)+"%. Real delivery is not guaranteed."; });
+
+  /* Danger monitor */
+  $("mltDangerBtn").addEventListener("click",function(){ openModal("mltDangerModal"); });
+  $("mltDangerClose").addEventListener("click",function(){ closeModal("mltDangerModal"); });
+  $("mltDangerStart").addEventListener("click",function(){
+    if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){ $("mltDangerStatus").textContent="Microphone API unavailable."; return; }
+    navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}}).then(function(stream){
+      var st=vgState.danger; st.stream=stream; st.ctx=new (window.AudioContext||window.webkitAudioContext)(); st.analyser=st.ctx.createAnalyser(); st.analyser.fftSize=2048; st.running=true; st.baseline=0; st.max=0;
+      var src=st.ctx.createMediaStreamSource(stream); src.connect(st.analyser); var data=new Float32Array(st.analyser.fftSize);
+      function loop(){ if(!st.running) return; st.analyser.getFloatTimeDomainData(data); var sum=0,peak=0; for(var i=0;i<data.length;i++){ var v=Math.abs(data[i]); sum+=v*v; if(v>peak) peak=v; } var rms=Math.sqrt(sum/data.length); st.baseline=st.baseline?st.baseline*0.98+rms*0.02:rms; if(peak>st.max) st.max=peak; var score=Math.min(100,Math.round((peak*65)+(rms/(st.baseline+0.0001))*12)); $("mltDangerBar").style.width=score+"%"; var candidate=(peak>0.85 || (st.baseline&&rms>st.baseline*8&&rms>0.08)); $("mltDangerStatus").textContent=(candidate?"⚠️ Candidate sudden loud/impulse sound. ":"Monitoring locally. ")+"Peak "+peak.toFixed(2)+" · RMS "+rms.toFixed(3)+" · relative score "+score+"/100"; st.raf=requestAnimationFrame(loop); }
+      loop(); vgSetStatus("Danger monitor running locally. No audio is recorded or uploaded.");
+    }).catch(function(err){ $("mltDangerStatus").textContent="Microphone denied: "+err.message; });
+  });
+  $("mltDangerStop").addEventListener("click",function(){ var st=vgState.danger; st.running=false; if(st.raf) cancelAnimationFrame(st.raf); if(st.stream) st.stream.getTracks().forEach(function(tr){tr.stop();}); if(st.ctx) st.ctx.close&&st.ctx.close(); vgState.danger={stream:null,ctx:null,analyser:null,raf:0,baseline:0,max:0,running:false}; $("mltDangerStatus").textContent="Stopped."; });
+  $("mltDangerAlert").addEventListener("click",function(){ var pkg=vgMakePackage("danger-alert","Danger sound candidate detected near this device.",{groupId:vgState.relay.groupId,peak:vgState.danger.max,relayAllowed:vgState.relay.allow}); $("mltRxCode").value=vgEncodePackage(pkg); openModal("mltReceiveModal"); $("mltRxStatus").textContent="Alert code created. Copy or send to approved group."; });
+
+  /* SOS */
+  function vgUpdateSosReady(){ vgState.sos.ready=!!vgState.sos.recipients.trim(); var msg=vgState.sos.ready?"SOS ready · approved recipients set.":"SOS not set up · add approved recipients first."; vgSetStatus(msg); }
+  $("mltSosSetupBtn").addEventListener("click",function(){ $("mltSosRecipients").value=vgState.sos.recipients; $("mltSosLocMode").value=vgState.sos.locMode; $("mltManualLocation").value=vgState.sos.manualLocation; openModal("mltSosSetupModal"); });
+  $("mltSosSetupClose").addEventListener("click",function(){ closeModal("mltSosSetupModal"); });
+  $("mltSosSave").addEventListener("click",function(){ vgState.sos.recipients=$("mltSosRecipients").value; vgState.sos.locMode=$("mltSosLocMode").value; vgState.sos.manualLocation=$("mltManualLocation").value; vgUpdateSosReady(); $("mltSosSetupStatus").textContent="Saved. Hold SOS for 3 seconds to send."; });
+  $("mltSosTest").addEventListener("click",function(){ vgFireSOS(true); });
+
+  function vgGetLocation(){
+    return new Promise(function(resolve){
+      if(vgState.sos.locMode==="none") return resolve({status:"disabled"});
+      if(vgState.sos.locMode==="manual") return resolve({status:"manual", text:vgState.sos.manualLocation||"manual location not set"});
+      if(!navigator.geolocation) return resolve({status:"unavailable", text:vgState.sos.manualLocation||"geolocation unavailable"});
+      navigator.geolocation.getCurrentPosition(function(pos){ resolve({status:"ok", lat:pos.coords.latitude, lon:pos.coords.longitude, acc:pos.coords.accuracy, ts:pos.timestamp}); }, function(err){ resolve({status:"failed", text:(vgState.sos.manualLocation||err.message||"location failed")}); }, {enableHighAccuracy:vgState.sos.locMode==="exact", timeout:2500, maximumAge:30000});
+    });
+  }
+  function vgFormatLoc(loc){ if(!loc) return "pending"; if(loc.status==="ok") return loc.lat.toFixed(5)+", "+loc.lon.toFixed(5)+" · about "+Math.round(loc.acc||0)+"m"; return loc.text||loc.status; }
+  function vgFireSOS(test){
+    if(!test && !vgState.sos.ready){ openModal("mltSosSetupModal"); $("mltSosSetupStatus").textContent="Add approved recipients before real SOS."; return; }
+    var now=Date.now(); if(!test && now-vgState.sos.lastSentAt<60000){ showToast("SOS rate limit: wait before sending again."); return; }
+    vgState.sos.lastSentAt=now;
+    var initial={status:"pending"};
+    var pkg=vgMakePackage(test?"sos-test":"sos","SOS: help requested",{recipients:vgState.sos.recipients,groupId:vgState.relay.groupId,relayAllowed:true,priority:"panic",location:initial});
+    var code=vgEncodePackage(pkg); $("mltSosCode").value=code; $("mltSosFireState").textContent=test?"TEST SOS":"SOS"; $("mltSosFireLoc").textContent="pending"; $("mltSosFireChannels").textContent="manual code + acoustic micro attempt"; openModal("mltSosFireModal");
+    try{ vgSendTextUltrasound("SOS "+pkg.msgId+" "+(vgState.relay.groupId||"")); }catch(e){}
+    vgGetLocation().then(function(loc){ pkg.meta.location=loc; var code2=vgEncodePackage(pkg); $("mltSosCode").value=code2; $("mltSosFireLoc").textContent=vgFormatLoc(loc); });
+  }
+  function vgSosHoldButton(btn){
+    var timer=0,start=0,holding=false;
+    function down(ev){ ev.preventDefault(); if(holding) return; holding=true; start=Date.now(); btn.classList.add("mlt-holding"); openModal("mltSosHoldModal");
+      (function tick(){ if(!holding) return; var p=Math.min(1,(Date.now()-start)/3000); $("mltSosHoldBar").style.width=Math.round(p*100)+"%"; $("mltSosCountdown").textContent=String(Math.max(0,Math.ceil(3-p*3))); if(p>=1){ holding=false; btn.classList.remove("mlt-holding"); closeModal("mltSosHoldModal"); vgFireSOS(false); } else timer=requestAnimationFrame(tick); })();
+    }
+    function up(){ if(!holding) return; holding=false; btn.classList.remove("mlt-holding"); if(timer) cancelAnimationFrame(timer); closeModal("mltSosHoldModal"); showToast("SOS canceled"); }
+    btn.addEventListener("pointerdown",down); btn.addEventListener("pointerup",up); btn.addEventListener("pointerleave",up); btn.addEventListener("pointercancel",up);
+    btn.addEventListener("keydown",function(ev){ if(ev.key===" "||ev.key==="Enter") down(ev); }); btn.addEventListener("keyup",function(ev){ if(ev.key===" "||ev.key==="Enter") up(); });
+  }
+  vgSosHoldButton($("mltSOSBtn")); vgSosHoldButton($("mltSOSBtnMobile"));
+  $("mltSosFireClose").addEventListener("click",function(){ closeModal("mltSosFireModal"); });
+  $("mltSosCopy").addEventListener("click",function(){ navigator.clipboard&&navigator.clipboard.writeText($("mltSosCode").value).then(function(){showToast("Copied");}).catch(function(){ $("mltSosCode").select(); }); });
+  $("mltSosTryBt").addEventListener("click",function(){ var old=sheetA.innerText; sheetA.textContent=$("mltSosCode").value; sendViaBluetooth(); setTimeout(function(){ sheetA.textContent=old; updateStat(); },100); });
+  $("mltSosSavePack").addEventListener("click",function(){ vgDownload("vitalguard_sos_"+Date.now()+".vgpack", $("mltSosCode").value, "application/json;charset=utf-8"); });
+
+  function vgSendTextUltrasound(text){
+    var payload=toBytes(text); if(payload.length>140){ setStatus("SOS acoustic code too long; use manual code."); return; }
+    var old=sheetA.innerText; sheetA.textContent=text; try{ sendViaUltrasound(); } finally { setTimeout(function(){ sheetA.textContent=old; updateStat(); },100); }
+  }
+
+  /* Export .vgpack from current document through receive/manual-code model */
+  var oldPaintRecommendation=paintRecommendation;
+  paintRecommendation=function(){ oldPaintRecommendation(); var e=vgEstimateUltrasoundSeconds(curText()); var rec=$("mltSendRec"); if(rec){ rec.innerHTML += '<div class="why"><b>Ultrasound estimate:</b> '+e.bytes+' bytes · about '+e.confirm+'s with ACK/guard. For long text, use .vgpack/manual code/BT instead.</div><div class="why"><button type="button" class="mlt-action" id="mltVgPackNow">Export .vgpack</button> <button type="button" class="mlt-action" id="mltManualNow">Make manual code</button></div>'; setTimeout(function(){ var a=$("mltVgPackNow"), b=$("mltManualNow"); if(a) a.onclick=function(){ var pkg=vgMakePackage("document",curText(),{title:"current document"}); vgDownload("vitalguard_document_"+Date.now()+".vgpack", JSON.stringify(pkg,null,2), "application/json;charset=utf-8"); }; if(b) b.onclick=function(){ var pkg=vgMakePackage("document",curText(),{title:"current document"}); $("mltRxCode").value=vgEncodePackage(pkg); openModal("mltReceiveModal"); $("mltRxStatus").textContent="Manual code created from current document."; }; },0); } };
+
+  /* Panic decommission */
+  var oldWipeOpen=$("mltWipeBtn").onclick;
+  $("mltWipeBtn").insertAdjacentHTML("afterend", '<button class="mlt-action mlt-danger mlt-foldable" id="mltPanicBtn" type="button" data-i18n="panicTitle">🔥 Panic decommission</button>');
+  $("mltPanicBtn").addEventListener("click",function(){ $("mltPanicPin").value=""; $("mltPanicStatus").textContent="Enter any 4 digits you set for this session. This demo uses the PIN as a deliberate friction layer."; openModal("mltPanicModal"); });
+  $("mltPanicCancel").addEventListener("click",function(){ closeModal("mltPanicModal"); });
+  $("mltPanicRun").addEventListener("click",function(){ var pin=$("mltPanicPin").value.trim(); if(!/^\d{4}$/.test(pin)){ $("mltPanicStatus").textContent="Enter exactly 4 digits."; return; } $("mltPanicStatus").textContent="Stopping channels and wiping working state…"; if(vgState.danger.stream) vgState.danger.stream.getTracks().forEach(function(tr){tr.stop();}); if(vgRxMic.stream) vgRxMic.stream.getTracks().forEach(function(tr){tr.stop();}); var noise=""; for(var i=0;i<4000;i++) noise+=String.fromCharCode(0x2500+Math.floor(Math.random()*300)); sheetA.textContent=noise; sheetB.textContent=noise; setTimeout(function(){ sheetA.textContent=""; sheetB.textContent=""; vgState.inbox=[]; vgState.outbox=[]; vgState.lastReceivedText=""; vgState.lastPackage=null; $("mltRxPreview").textContent=""; $("mltRxCode").value=""; updateStat(); $("mltPanicStatus").textContent="Working state cleared. Browser cannot guarantee deletion of downloaded/original HTML files; delete them manually if needed."; },500); });
+
+  ["mltHelpModal","mltReceiveModal","mltRelayModal","mltDangerModal","mltSosSetupModal","mltSosFireModal","mltPanicModal"].forEach(function(id){ var el=$(id); if(el) el.addEventListener("click",function(ev){ if(ev.target===el) closeModal(id); }); });
+  vgUpdateSosReady(); vgRefreshTransferEstimate();
+
+
   /* ===================== modal backdrop close ===================== */
   ["mltSaveModal","mltNoiseModal","mltHashModal","mltAiModal","mltWipeModal","mltEyeModal","mltSendModal"].forEach(function(id){
     $(id).addEventListener("click",function(ev){ if(ev.target===$(id)) closeModal(id); });
@@ -1548,3 +1930,6 @@
   applyPageW(); applyPageFs(); langSel.value="en"; applyLang();
 })();
 </script>
+
+</body>
+</html>
