@@ -1,8 +1,9 @@
 <!--
-  Letter Composer V3.0 (block module for existing index.html)
+  Letter Composer V3.1 (block module for existing index.html)
   Vanilla HTML + CSS + JS / no external libraries / fully offline
   No network transmission. Images embedded locally as base64 only.
-  Loaded HTML is sanitized (scripts and on* handlers stripped).
+  Open: loads a file's RAW SOURCE CODE as plain text (tags shown as text,
+  never rendered or executed), preserving line breaks and indentation.
 -->
 
 <style>
@@ -116,7 +117,7 @@
   <div class="mlt-head">
     <div class="mlt-title">
       <span data-i18n="title">Letter / Correspondence Composer</span>
-      <span style="font-weight:400;color:var(--mlt-muted);font-size:11px;">V3.0</span>
+      <span style="font-weight:400;color:var(--mlt-muted);font-size:11px;">V3.1</span>
       <small data-i18n="subtitle">Formatting applies as you type · Fully offline</small>
     </div>
     <div class="mlt-headright">
@@ -199,7 +200,7 @@
     <button class="mlt-btn" id="mltInsertImg" data-i18n="insertImg" title="" type="button">🖼 Image</button>
     <button class="mlt-btn" data-cmd="removeFormat" data-i18n-title="tRemoveFmt" title="Clear formatting" type="button">⌧</button>
     <input type="file" id="mltFile" accept="image/*" multiple style="display:none;">
-    <input type="file" id="mltOpenFile" accept=".html,.htm,text/html" style="display:none;">
+    <input type="file" id="mltOpenFile" accept=".html,.htm,.txt,.js,.css,.json,.xml,.md,.csv,.svg,text/*" style="display:none;">
   </div>
 
   <div class="mlt-imgbar" id="mltImgBar">
@@ -265,14 +266,15 @@
       phA:"Type your letter here. Select text, then use the toolbar to make it bold, larger, colored, aligned, or change the font. Use 🖼 Image, or drag & drop an image into the page.",
       phB:"Your reference text (Korean).",
       szXS:"Very small", szM:"Normal", szL:"Large", szXL:"Larger", szH:"Heading", szT:"Title",
-      saveHtml:"💾 Save HTML", openHtml:"📂 Open HTML", copyText:"📋 Copy plain text", backup:"🛟 Backup", clearAll:"🗑 Clear all",
+      saveHtml:"💾 Save HTML", openHtml:"📂 Open source code", copyText:"📋 Copy plain text", backup:"🛟 Backup", clearAll:"🗑 Clear all",
       tSaved:"Saved as an HTML file.", tBackup:"Backup file downloaded.",
       tCopied:"Plain text copied.", tCopyFail:"Copy failed. Please select manually.",
       tCleared:"All content cleared.", confirmClear:"Delete all content? This cannot be undone.",
       tImgOnly:"Only image files can be inserted.", tImgBig:"Image is large (8MB+ recommended max).",
       tImgAdded:"Image added. Click it to resize.", tImgDeleted:"Image deleted.",
       tNotSupported:"Not supported in this browser.",
-      tLoaded:"HTML file loaded.", tLoadFail:"Could not read the file.", tHtmlOnly:"Please choose an .html file.",
+      tLoaded:"Source code loaded as text.", tLoadFail:"Could not read the file.", tHtmlOnly:"Please choose a text or code file.",
+      confirmReplace:"Loading will replace the current content. Continue?",
       statFmt:function(n,p){return "Characters "+n.toLocaleString()+" · approx. "+p+" page"+(p>1?"s":"");}
     },
     ko:{
@@ -291,14 +293,15 @@
       phA:"여기에 편지를 입력하세요. 글자를 드래그한 뒤 위 버튼으로 굵게·크게·색·정렬·글꼴을 조절할 수 있습니다. 🖼 이미지 버튼을 쓰거나, 이미지를 화면으로 끌어다 놓아도 됩니다.",
       phB:"본인 확인용 한국어 내용을 여기에 적습니다.",
       szXS:"아주 작게", szM:"보통", szL:"크게", szXL:"더 크게", szH:"제목", szT:"큰 제목",
-      saveHtml:"💾 HTML 저장", openHtml:"📂 HTML 불러오기", copyText:"📋 순수 텍스트 복사", backup:"🛟 백업", clearAll:"🗑 전체 삭제",
+      saveHtml:"💾 HTML 저장", openHtml:"📂 코드 불러오기", copyText:"📋 순수 텍스트 복사", backup:"🛟 백업", clearAll:"🗑 전체 삭제",
       tSaved:"HTML 파일로 저장했습니다.", tBackup:"백업 파일을 내려받았습니다.",
       tCopied:"순수 텍스트를 복사했습니다.", tCopyFail:"복사에 실패했습니다. 직접 선택해 주세요.",
       tCleared:"모든 내용을 삭제했습니다.", confirmClear:"작성한 모든 내용을 삭제할까요? 되돌릴 수 없습니다.",
       tImgOnly:"이미지 파일만 넣을 수 있습니다.", tImgBig:"이미지가 큽니다(8MB 이하 권장).",
       tImgAdded:"이미지를 넣었습니다. 클릭하면 크기를 조절할 수 있습니다.", tImgDeleted:"이미지를 삭제했습니다.",
       tNotSupported:"이 브라우저에서 지원하지 않는 기능입니다.",
-      tLoaded:"HTML 파일을 불러왔습니다.", tLoadFail:"파일을 읽지 못했습니다.", tHtmlOnly:".html 파일을 선택해 주세요.",
+      tLoaded:"소스 코드를 텍스트로 불러왔습니다.", tLoadFail:"파일을 읽지 못했습니다.", tHtmlOnly:"텍스트 또는 코드 파일을 선택해 주세요.",
+      confirmReplace:"불러오면 현재 작성한 내용이 대체됩니다. 계속할까요?",
       statFmt:function(n,p){return "글자 "+n.toLocaleString()+"자 · 약 "+p+"쪽";}
     }
   };
@@ -558,48 +561,35 @@
     deselectImage(); downloadBlob(buildHtmlDoc(),"letter_backup_"+stamp()+".html","text/html;charset=utf-8"); showToast("tBackup");
   });
 
-  /* ---------- open / load HTML (sanitized) ---------- */
+  /* ---------- open / load RAW SOURCE CODE as plain text ---------- */
   document.getElementById("mltOpenHtml").addEventListener("click",function(){ openInp.click(); });
   openInp.addEventListener("change",function(){
     var f=openInp.files && openInp.files[0]; if(!f){ return; }
-    if(!/\.html?$/i.test(f.name) && f.type!=="text/html"){ showToast("tHtmlOnly"); openInp.value=""; return; }
+    // 현재 내용이 있으면 대체 확인
+    var hasContent=(sheetA.innerText||"").trim().length>0 || (biMode && (sheetB.innerText||"").trim().length>0);
+    if(hasContent && !confirm(t("confirmReplace"))){ openInp.value=""; return; }
     var r=new FileReader();
-    r.onload=function(){ loadHtmlString(String(r.result)); openInp.value=""; };
+    r.onload=function(){ loadSourceCode(String(r.result)); openInp.value=""; };
     r.onerror=function(){ showToast("tLoadFail"); openInp.value=""; };
-    r.readAsText(f);
+    r.readAsText(f);   // 파일을 '텍스트'로 읽음 → 렌더링하지 않음
   });
 
-  function sanitize(node){
-    // 위험 요소 제거: script/style/link/meta + 모든 on* 이벤트 속성 + javascript: URL
-    node.querySelectorAll("script,style,link,meta,iframe,object,embed").forEach(function(el){ el.remove(); });
-    node.querySelectorAll("*").forEach(function(el){
-      [].slice.call(el.attributes).forEach(function(at){
-        var n=at.name.toLowerCase(), v=(at.value||"").toLowerCase();
-        if(n.indexOf("on")===0) el.removeAttribute(at.name);
-        else if((n==="href"||n==="src") && v.indexOf("javascript:")===0) el.removeAttribute(at.name);
-      });
-    });
-    return node;
-  }
-  function loadHtmlString(str){
-    var doc;
-    try{ doc=new DOMParser().parseFromString(str,"text/html"); }
-    catch(e){ showToast("tLoadFail"); return; }
-    var body=doc.body || doc.documentElement;
-    sanitize(body);
-    var container=body.querySelector('[data-mlt="doc"]') || body.querySelector("body > div") || body;
-    var biTable=container.querySelector('table[data-mlt="bi"]') || container.querySelector("table");
-
-    if(biTable){
-      var cells=biTable.querySelectorAll("td");
-      sheetA.innerHTML = cells[0]?cells[0].innerHTML:"";
-      sheetB.innerHTML = cells[1]?cells[1].innerHTML:"";
-      if(!biMode){ biMode=true; wrap.classList.add("mlt-bi"); document.getElementById("mltBiToggle").classList.add("mlt-on"); }
-    } else {
-      sheetA.innerHTML = container.innerHTML;
-      if(biMode){ biMode=false; wrap.classList.remove("mlt-bi"); document.getElementById("mltBiToggle").classList.remove("mlt-on"); sheetB.innerHTML=""; }
+  // 파일의 원본 소스 코드를 글자 그대로 편집 칸에 표시(태그는 실행/렌더링되지 않음)
+  function loadSourceCode(str){
+    var pre=document.createElement("pre");
+    pre.style.cssText="white-space:pre-wrap;word-break:break-word;"+
+      "font-family:'Courier New',Courier,monospace;font-size:13px;line-height:1.55;margin:0;";
+    pre.textContent=str;          // textContent라 <,>,& 가 자동으로 글자 처리됨(코드 실행 불가)
+    sheetA.innerHTML="";
+    sheetA.appendChild(pre);
+    // 병기 모드였다면 단일 칸으로 정리
+    if(biMode){
+      biMode=false; wrap.classList.remove("mlt-bi");
+      document.getElementById("mltBiToggle").classList.remove("mlt-on"); sheetB.innerHTML="";
     }
-    deselectImage(); updateStat(); showToast("tLoaded");
+    deselectImage(); updateStat();
+    sheetA.scrollIntoView({block:"nearest"});
+    showToast("tLoaded");
   }
 
   /* ---------- copy / clear ---------- */
