@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<title>Vitalguard-AI V5.7 — miniGit, no tracking</title>
+<title>Vitalguard-AI V5.8 — miniGit, no tracking</title>
 </head>
 <body>
 <!--
-  Vitalguard-AI V5.7 — miniGit, no tracking
+  Vitalguard-AI V5.8 — miniGit, no tracking
   Vanilla HTML + CSS + JS / zero external libraries / fully offline.
 
   MIT License
@@ -33,67 +33,44 @@
   SOFTWARE.
 
   V5.6 changes:
-   - Brand unified as: Vitalguard-AI V5.6 — miniGit, no tracking.
-   - MIT license header replaces the previous restrictive license note.
-   - Supported file extensions are clearly shown; DOCX/PDF are not selectable.
-   - Collapse mode reduces guide cards to four essential buttons.
-   - Added radio-style compressed text log with a transparent humanitarian codebook.
-   - Added memory-only miniGit snapshots, source search, and simple line diff.
+   - Brand: Vitalguard-AI — miniGit, no tracking. MIT license replaces prior note.
+   - Supported extensions shown; DOCX/PDF not selectable. Collapse mode = 4 buttons.
+   - Radio-style compressed text log (humanitarian codebook); miniGit snapshots+diff.
 
   V5.7 changes:
-   - "Simple / Expert" formatting modes relabelled; Expert now reveals advanced tools
-     even while the toolbar is collapsed (fixed a CSS specificity conflict).
-   - Help buttons added inside the miniGit, Hash, Send and other modals; the main Help
-     panel now explains the Post-it diet calculator (cover) and the emergency wipe.
-   - New Post-it mode: an ephemeral diet calorie calculator with 50 demo recipes that
-     acts as a plausible cover. Content lives in memory only and is gone when the tab
-     closes. A single one-time setup picks the food that unlocks the editor again.
-   - Emergency wipe: tapping a calorie value immediately destroys all in-memory data
-     and corrupts the live DOM so nothing readable remains. This is a self-wipe of the
-     user's own data on their own device — it never touches any other system or network.
-   - Communication safety: choosing Bluetooth (or "Both") shows a balanced tracking
-     warning; ultrasound is presented as lower network-identifier risk, not "perfectly
-     safe". Incognito/secret mode cannot be auto-enabled by a web page; the tool only
-     guides the user to open it in a private window (stated honestly).
+   - "Simple/Expert" format relabelled; Expert reveals tools even while collapsed.
+   - Help buttons added inside modals; Post-it diet-calculator cover + emergency wipe.
+   - Post-it ephemeral cover (50 demo recipes), one-time unlock-food setup.
+   - Emergency wipe: a calorie tap destroys in-memory data and corrupts the live DOM
+     (a self-wipe of the user's own data on their own device; no network).
+   - Comms safety warning (Bluetooth vs ultrasound); honest incognito guidance.
 
 
-  V5.7-module source refactor:
-   - Runtime markup, CSS selectors, DOM IDs, event targets, and visual styling are
-     intentionally preserved so the editor looks the same as the V5.7 backup build.
-   - The source is reorganized with explicit MODULE comments and a source-level module
-     index. These boundaries make it possible to extract features like editor core,
-     miniGit, hashing, transfer, Sentinel, or Post-it as Lego-like pieces later.
-   - Comments are written in English and include extraction notes plus improvement ideas.
-   - Improvement ideas are documentation only; they do not change the current UI or flow.
+  V5.8 changes (ultrasound reliability focus):
+   - Layered FEC for the noisy ultrasound channel: interleaving + repetition(majority)
+     + Hamming(7,4). Reed-Solomon reserved as FEC_MODE=3 (planned, NOT shipped) until an
+     independent audit validates a GF(256) coder — shipping an unaudited one would
+     contradict the honesty principle.
+   - "AURA" adaptive controller (vanilla JS, Brain-AI Bayesian/Risk patterns): estimates
+     ambient noise, starts light, escalates FEC only after observed failures, learns
+     online which mode works here. Transparent: every decision logged; no model, no net.
+   - Codebook expanded 10 -> 20 (authoritarian-context terms: BEING FOLLOWED, DETAINED,
+     EXFIL NOW, ...). "Radio Log" renamed "Emergency Radio" in all 7 languages.
+   - Help expanded for first-time users; honest memory-erasure limits stated.
+
+  V5.7-module source refactor: runtime markup/CSS/IDs preserved; MODULE comments +
+  SOURCE_MODULE_INDEX (in JS) define extractable Lego-like module boundaries.
 -->
 
 
 
-<!--
-  SOURCE MODULE MAP — CSS AND HTML SHELL
-  ---------------------------------------------------------------------------
-  css.core-shell        : Root wrapper, design tokens, header, toolbar, page canvas.
-  css.editor-surfaces   : Stage, columns, sheet, code view, email/mobile variants.
-  css.modal-system      : Modal, toast, hash rows, scan report, Amsler grid.
-  css.vitalguard-v56    : SOS, Help, Simple/Expert, Sentinel, miniGit, Radio Log.
-  css.postit-v57        : Ephemeral diet-calculator cover and one-time setup overlay.
-  html.app-shell        : Header, guide cards, status bars, toolbar, editor, footer.
-  html.cover-postit     : Memory-only Post-it cover screen.
-  html.modal-library    : Dialogs grouped by feature. Each modal can become a component.
-
-  Extraction note:
-  Keep each CSS module with the matching HTML/JS module. The visual contract is based on
-  stable class prefixes (`mlt-*`) and IDs (`mlt...`). Avoid renaming those until all event
-  bindings and i18n keys are moved to a dedicated component manifest.
-
-  Improvement idea:
-  A future build step could split these modules into separate `.css`, `.html`, and `.js`
-  files, then assemble the offline single-file release automatically.
--->
+<!-- SOURCE MODULE MAP: authoritative module list is SOURCE_MODULE_INDEX in the JS
+     section. CSS/HTML modules use stable mlt-* class/ID prefixes; keep each CSS module
+     with its matching HTML/JS module. (full map omitted to keep release under 400KB) -->
 
 <style>
 
-/* ============================================================================
+/* ====
    MODULE: css.core-shell
    Responsibility:
    - Defines the root design tokens and the warm-paper visual shell.
@@ -105,7 +82,7 @@
    Improvement idea:
    - Move tokens to a single theme module and generate dark/high-contrast themes without
      changing component selectors.
-   ========================================================================== */
+   ==== */
 .mlt-wrap{
   --mlt-ink:#23201b; --mlt-paper:#fdfcf6; --mlt-line:#e4ded0;
   --mlt-accent:#7a5c3e; --mlt-bg:#efece4; --mlt-bar:#fbfaf6;
@@ -325,7 +302,7 @@
   .mlt-head{flex-direction:column;align-items:stretch;}
 }
 
-/* ============================================================================
+/* ====
    MODULE: css.vitalguard.sos-and-status
    Responsibility:
    - Styles SOS affordances, status pills, cards, and emergency-related UX.
@@ -333,7 +310,7 @@
    - Keep this with the SOS setup/fire/hold modals and `vgState.sos` JS module.
    Improvement idea:
    - Add a theme token for emergency colors instead of hard-coded reds.
-   ========================================================================== */
+   ==== */
 .mlt-vg-sos{
   border:2px solid #fff!important;background:#7f1d1d!important;color:#fff!important;
   font-weight:900!important;box-shadow:0 0 0 3px rgba(127,29,29,.18);min-width:72px;
@@ -373,7 +350,7 @@
 
 
 
-/* ============================================================================
+/* ====
    MODULE: css.modal.confirmation-affordances
    Responsibility:
    - Makes modal confirmation buttons sticky and visible on small screens.
@@ -381,7 +358,7 @@
    - Pair with `ModalSystem.enhanceModalConfirmButtons()` in JS.
    Improvement idea:
    - Replace generated OK buttons with declarative modal metadata.
-   ========================================================================== */
+   ==== */
 .mlt-card{position:relative;}
 .mlt-card .mlt-foot2{
   position:sticky;
@@ -417,7 +394,7 @@
 }
 
 
-/* ============================================================================
+/* ====
    MODULE: css.help.attention-and-topic-viewer
    Responsibility:
    - Styles the blinking Help button, table of contents, and help detail panel.
@@ -425,7 +402,7 @@
    - Pair with `VG_HELP_TOPICS` and `vgRenderHelpTopics()`.
    Improvement idea:
    - Persist a privacy-safe session-only flag to avoid re-blinking after modal reopen.
-   ========================================================================== */
+   ==== */
 .mlt-help-attn{
   animation:mltHelpPulse 1.1s ease-in-out infinite;
   border-color:#b5462f!important;
@@ -447,7 +424,7 @@
 @media(prefers-reduced-motion:reduce){.mlt-help-attn{animation:none;outline:3px solid rgba(181,70,47,.25);}}
 
 
-/* ============================================================================
+/* ====
    MODULE: css.beginner-mode-and-transfer-wizard
    Responsibility:
    - Styles Simple/Expert visibility, guide cards, wizard cards, mailbox, and visual grid.
@@ -455,7 +432,7 @@
    - Pair with the V5.6 beginner-first JS module and transfer wizard modals.
    Improvement idea:
    - Convert repeated card styles into reusable utility classes.
-   ========================================================================== */
+   ==== */
 .mlt-mode-guide{padding:12px 16px;background:#fffaf0;border-bottom:1px solid var(--mlt-line);display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;font-size:12px;color:var(--mlt-ink);}
 .mlt-guide-card{border:1px solid #ecdca8;background:#fffdf7;border-radius:12px;padding:10px;line-height:1.5;}
 .mlt-guide-card b{display:block;font-size:13px;margin-bottom:3px;color:#5c422b;}
@@ -484,7 +461,7 @@
 .mlt-focus-sentinel{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;}
 @media(max-width:640px){.mlt-mode-guide{grid-template-columns:1fr;padding:10px}.mlt-choice{text-align:left}.mlt-v55-mode{width:100%;}}
 
-/* ============================================================================
+/* ====
    MODULE: css.sentinel
    Responsibility:
    - Styles Sentinel status bar, switches, and availability badges.
@@ -492,7 +469,7 @@
    - Pair with the Sentinel Wake Lock / BLE / visibility JS module.
    Improvement idea:
    - Add a capability-diagnostics panel that lists exact browser constraints.
-   ========================================================================== */
+   ==== */
 .mlt-sentbar{display:none;align-items:center;gap:14px;flex-wrap:wrap;
   padding:9px 16px;background:#f3eee2;border-bottom:1px solid var(--mlt-line);
   font-size:12px;color:var(--mlt-ink);}
@@ -526,7 +503,7 @@
 
 
 
-/* ============================================================================
+/* ====
    MODULE: css.minigit-radio
    Responsibility:
    - Styles file-open hint, drag overlay, radio log, codebook, snapshots, and diff view.
@@ -534,7 +511,7 @@
    - Pair with miniGit and radio-compression JS helpers.
    Improvement idea:
    - Add optional syntax highlighting as a local-only module.
-   ========================================================================== */
+   ==== */
 .mlt-open-hint{font-size:11.5px;color:var(--mlt-muted);background:#fffdf7;border-bottom:1px solid var(--mlt-line);padding:7px 16px;line-height:1.55;}
 .mlt-drop-overlay{position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:10001;background:#23201b;color:#fff;border-radius:12px;padding:11px 16px;box-shadow:0 10px 30px rgba(0,0,0,.25);font-size:13px;max-width:92vw;display:none;}
 .mlt-drop-overlay.mlt-show{display:block;}
@@ -557,7 +534,7 @@
 .mlt-diff-same{display:block;color:#6b6258;}
 .mlt-mini-search-result{font-size:12px;line-height:1.6;background:#fff;border:1px solid var(--mlt-line);border-radius:10px;padding:8px;max-height:190px;overflow:auto;}
 
-/* ============================================================================
+/* ====
    MODULE: css.postit-cover
    Responsibility:
    - Styles the memory-only diet calculator cover and one-time unlock setup overlay.
@@ -565,7 +542,7 @@
    - Pair with the V5.7 Post-it JS module and keep wipe behavior isolated.
    Improvement idea:
    - Make cover recipes configurable through a local-only data module.
-   ========================================================================== */
+   ==== */
 /* Post-it mode hides the editor chrome and shows a plausible diet calorie calculator.
    All content is memory-only; closing the tab wipes it. Tapping a calorie value triggers
    an emergency self-wipe of the user's own in-memory data (see panicWipe in JS). */
@@ -642,8 +619,8 @@
 
   <div class="mlt-head">
     <div class="mlt-title">
-      <span data-i18n="title">Vitalguard-AI V5.7 — miniGit, no tracking</span>
-      <span style="font-weight:400;color:var(--mlt-muted);font-size:11px;">V5.7</span>
+      <span data-i18n="title">Vitalguard-AI V5.8 — miniGit, no tracking</span>
+      <span style="font-weight:400;color:var(--mlt-muted);font-size:11px;">V5.8</span>
       <small data-i18n="subtitle">Offline · local-first · code never auto-runs</small>
     </div>
     <div class="mlt-headright">
@@ -672,7 +649,7 @@
     </div>
   </div>
 
-  <div class="mlt-vg-status" id="mltVgStatus" aria-live="polite"><b>Vitalguard-AI V5.7</b> · Offline local mode · Send/Receive/SOS only after explicit user action.</div>
+  <div class="mlt-vg-status" id="mltVgStatus" aria-live="polite"><b>Vitalguard-AI V5.8</b> · Offline local mode · Send/Receive/SOS only after explicit user action.</div>
 
   <div class="mlt-mode-guide" id="mltModeGuide" aria-live="polite">
     <div class="mlt-guide-card"><b data-i18n="guideWriteTitle">1. Write or open</b><span class="mlt-guide-desc" data-i18n="guideWriteBody">Start with the paper area, or open a TXT/HTML/MD/source file.</span><br><button class="mlt-action" id="mltGuideOpen" type="button" data-i18n="openHtml">📂 Open</button></div>
@@ -686,6 +663,7 @@
     <span class="mlt-sent-item"><span class="mlt-dot" id="mltSentDot"></span><b data-i18n="sentBarTitle">Sentinel active</b></span>
     <span class="mlt-sent-item"><span data-i18n="sentScreen">Screen</span>: <b id="mltSentScreen">—</b></span>
     <span class="mlt-sent-item"><span data-i18n="sentNearby">Nearby</span>: <b id="mltSentNearby">—</b></span>
+    <span class="mlt-sent-item"><span data-i18n="tailLabel">Persistent signals:</span> <b id="mltSentTail">—</b></span>
     <span class="mlt-sent-item"><span data-i18n="sentElapsed">Elapsed</span>: <b id="mltSentElapsed">0s</b></span>
   </div>
 
@@ -979,6 +957,18 @@
     <button class="mlt-toggle" id="mltSwHidden" type="button" role="switch" aria-checked="false" aria-labelledby="mltSwHiddenWrap"></button>
   </div>
 
+  <div class="mlt-switch" id="mltSwTailWrap" style="display:block;">
+    <div class="mlt-sw-main">
+      <div class="mlt-sw-name" data-i18n="tailTitle">🧭 Tail-detection (weak signal)</div>
+      <div class="mlt-sw-desc" data-i18n="tailDesc">While "Detect nearby devices" is on, tap "New place" after you move. If the same anonymous signal keeps reappearing across several places, it is surfaced below as a weak signal. Device identifiers are never stored — only an anonymous count.</div>
+      <div class="mlt-row" style="margin-top:6px;align-items:center;gap:10px;">
+        <button class="mlt-action" id="mltSentNewPlace" type="button" data-i18n="tailNewPlace">📍 New place</button>
+        <span style="font-size:12px;"><b data-i18n="tailLabel">Persistent signals:</b> <span id="mltSentTailModal">—</span></span>
+      </div>
+      <div class="mlt-sw-why" data-i18n="tailWhy" style="display:block;color:var(--mlt-muted);">This is NOT proof of surveillance. Family or coworker phones recur too, and modern phones randomise their Bluetooth address, so a real tail may be missed and an innocent device may be flagged. Treat it only as a prompt to stay aware.</div>
+    </div>
+  </div>
+
   <div class="mlt-disc" data-i18n="sentinelDisc">⚠️ A web page cannot scan your surroundings secretly, and cannot run with the screen off. This is a browser limitation, not a setting. Sentinel Mode states honestly what it can and cannot do in your current environment; if a switch is greyed out, the reason is shown next to it.</div>
   <div class="mlt-foot2">
     <button class="mlt-action" id="mltSentinelStop" type="button" data-i18n="sentinelStop">Turn all off</button>
@@ -1002,6 +992,7 @@
     <label><input type="checkbox" id="mltWipeConfirm"> <span data-i18n="wipeAck">I understand this clears the editor and cannot be undone.</span></label>
   </div>
   <div id="mltWipeProg" style="font-size:12px;color:var(--mlt-muted);"></div>
+  <div class="mlt-disc" data-i18n="wipeMemLimit" style="border-left:4px solid #c9a227;">Honest limit: a web page cannot guarantee physical erasure. The OS may keep copies in swap/pagefile, hibernation images, or SSD remapped blocks beyond a browser's reach. For seizure-grade protection, combine with OS-level full-disk encryption and keep sensitive data off the device when possible.</div>
   <div class="mlt-foot2">
     <button class="mlt-action mlt-danger" id="mltWipeGo" type="button" data-i18n="wipeGo">Wipe now</button>
     <button class="mlt-action" id="mltWipeCancel" type="button" data-i18n="cancel">Cancel</button>
@@ -1074,6 +1065,7 @@
   <div class="mlt-progbar" id="mltSendProg"><i></i></div>
   <div class="mlt-sndstatus" id="mltSendStatus"></div>
   <div class="mlt-disc" data-i18n="sendNote">Ultrasound uses the speaker (FSK ~17–18 kHz) and the receiver's microphone; it works fully offline with no pairing. Bluetooth uses the browser's Web Bluetooth and requires the other device to have Bluetooth enabled. Some browsers (notably iOS Safari) do not support Web Bluetooth — in that case use ultrasound.</div>
+  <div class="mlt-disc" data-i18n="fecBadge" style="border-left:4px solid #2e7d32;">Forward error correction (interleaving + Hamming) is applied to resist noise; Reed-Solomon is planned pending audit.</div>
   <div class="mlt-foot2">
     <button class="mlt-action" id="mltSendStop" type="button" data-i18n="sendStop" style="display:none;">Stop</button>
     <button class="mlt-action mlt-primary" id="mltSendClose" type="button" data-i18n="ok">OK</button>
@@ -1265,9 +1257,28 @@
     <div class="mlt-row" style="margin-top:8px;"><button class="mlt-action mlt-primary" id="mltRadioSend" type="button" data-i18n="radioSend">Send compressed by ultrasound</button><button class="mlt-action" id="mltRadioCode" type="button" data-i18n="radioMakeCode">Create radio code</button><button class="mlt-action" id="mltRadioSayAgain" type="button" data-i18n="radioSayAgain">Say again</button></div>
     <textarea class="mlt-vg-area" id="mltRadioCodeOut" readonly placeholder="VG56R..."></textarea>
   </div>
+  <div class="mlt-vg-card" id="mltAuraCard">
+    <h4 data-i18n="auraTitle">🤖 AURA — adaptive error correction</h4>
+    <p class="mlt-sub" data-i18n="auraDesc" style="font-size:12px;color:var(--mlt-muted);">AURA estimates the noise around you and picks the error-correction strength automatically. It starts light and gets stronger only if a message fails. Every decision is shown below. It learns on this device only and sends nothing.</p>
+    <div class="mlt-row" style="margin-top:8px;flex-wrap:wrap;gap:8px;">
+      <label data-i18n="auraModeLbl">FEC</label>
+      <select class="mlt-select" id="mltAuraMode">
+        <option value="auto" data-i18n="auraAuto">Auto (AURA decides)</option>
+        <option value="0" data-i18n="auraOff">Off — fastest, fragile</option>
+        <option value="1" data-i18n="auraRep">Repetition ×3</option>
+        <option value="2" data-i18n="auraHam">Hamming + interleave</option>
+        <option value="3" data-i18n="auraRs">Reed-Solomon (planned)</option>
+      </select>
+      <button class="mlt-action" id="mltAuraProbe" type="button" data-i18n="auraProbe">🎙 Probe noise</button>
+    </div>
+    <div class="mlt-timebox" id="mltAuraStatus" style="margin-top:8px;">—</div>
+    <div class="mlt-radio-log" id="mltAuraLog" style="max-height:120px;margin-top:8px;"></div>
+    <div class="mlt-disc" data-i18n="auraNote">AURA is a transparent heuristic aid, not a guarantee. Reed-Solomon is reserved and ships only after an independent security audit; until then the strongest active mode is Hamming with interleaving.</div>
+  </div>
   <div class="mlt-vg-card"><h4 data-i18n="radioReceiveTitle">Decode incoming code</h4><textarea class="mlt-vg-area" id="mltRadioDecodeIn" placeholder="VG56R..."></textarea><div class="mlt-row" style="margin-top:8px;"><button class="mlt-action" id="mltRadioDecodeBtn" type="button" data-i18n="radioDecode">Decode to log</button></div></div>
   <div class="mlt-vg-card"><h4 data-i18n="radioLogTitle">Memory-only radio log</h4><div class="mlt-radio-log" id="mltRadioLog"></div></div>
   <div class="mlt-disc" data-i18n="radioCaveat">This is not covert military signaling. The codebook is visible, humanitarian, and meant to make slow ultrasound more understandable and reliable.</div>
+  <div class="mlt-disc" data-i18n="fecBadge" style="border-left:4px solid #2e7d32;">Forward error correction (interleaving + Hamming) is applied to resist noise; Reed-Solomon is planned pending audit.</div>
   <div class="mlt-foot2"><button class="mlt-action mlt-primary" id="mltRadioClose" type="button" data-i18n="ok">OK</button></div>
 </div></div>
 
@@ -1312,7 +1323,7 @@
   "use strict";
 
 
-  /* ============================================================================
+  /* ====
      MODULE: js.source-module-index
      Responsibility:
      - Documents the major source modules in machine-readable form.
@@ -1325,7 +1336,7 @@
 
      Improvement idea:
      - Generate this index automatically from real module files during a build step.
-     ========================================================================== */
+     ==== */
   var SOURCE_MODULE_INDEX = Object.freeze([
     {id:"css.core-shell", owns:[".mlt-wrap", ".mlt-head", ".mlt-toolbar"], dependsOn:[], extractWith:["html.app-shell", "js.layout.controls"]},
     {id:"html.app-shell", owns:["#mltWrap", "#mltToolbar", "#mltSheetA", "#mltSheetB"], dependsOn:["css.core-shell"], extractWith:["js.editor.rich-text-formatting", "js.editor.stats"]},
@@ -1345,7 +1356,7 @@
   ]);
   try { Object.defineProperty(window, "VitalguardSourceModules", {value: SOURCE_MODULE_INDEX, enumerable:false, configurable:false}); } catch(e) {}
 
-  /* ============================================================================
+  /* ====
    MODULE: js.i18n.base-dictionaries
    Responsibility:
    - Provides base UI strings for the editor in seven languages.
@@ -1355,7 +1366,7 @@
    - This module can be extracted as JSON plus a tiny lookup adapter.
    Improvement idea:
    - Use one canonical version string to avoid V5.6/V5.7 label drift.
-   ========================================================================== */
+   ==== */
   var I18N={
     en:{
       _dir:"ltr",
@@ -1751,7 +1762,7 @@
     }
   };
 
-  /* ============================================================================
+  /* ====
    MODULE: js.i18n.vitalguard-extension
    Responsibility:
    - Adds Vitalguard/SOS/Receive/Relay/Danger strings on top of base i18n.
@@ -1759,7 +1770,7 @@
    - Keep this with the Vitalguard workflow modules if extracting only editor core.
    Improvement idea:
    - Store extension dictionaries in feature-owned files and merge at boot.
-   ========================================================================== */
+   ==== */
   var VG52_I18N={
     en:{
       title:"Vitalguard-AI", subtitle:"Offline · local-first · code never auto-runs", helpBtn:"❔ Help", sosSetupBtn:"🧭 SOS setup", sosBtn:"SOS\nHold 3s", receiveBtn:"📥 Receive", relayBtn:"🌐 Group relay", dangerBtn:"⚠️ Danger monitor",
@@ -1786,7 +1797,7 @@
     I18N[k].title=(local.title||base.title); I18N[k].subtitle=(local.subtitle||base.subtitle);
   });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.i18n.sentinel-extension
    Responsibility:
    - Adds Sentinel Mode capability text and browser-limitation explanations.
@@ -1794,7 +1805,7 @@
    - This can ship only with the Sentinel module.
    Improvement idea:
    - Add dynamic browser/version capability messages when reliable APIs exist.
-   ========================================================================== */
+   ==== */
   var VG54_I18N={
     en:{
       subtitle:"Zero-dependency · offline infrastructure · code never executed",
@@ -1960,7 +1971,7 @@
 
 
 
-  /* ============================================================================
+  /* ====
    MODULE: js.i18n.beginner-wizard-mailbox
    Responsibility:
    - Adds Simple/Expert, Transfer Wizard, mailbox, visual code, and wipe-scope strings.
@@ -1968,7 +1979,7 @@
    - Keep with the V5.6 beginner-first module.
    Improvement idea:
    - Split long strings into help topics versus button labels for easier translation.
-   ========================================================================== */
+   ==== */
   var VG55_I18N={
     en:{
       modeSimple:"🧭 Simple format", modeExpert:"🧪 Expert format", transferWizardBtn:"🧭 Transfer Wizard", mailboxBtn:"📬 Inbox/Outbox",
@@ -1983,7 +1994,7 @@
   };
   Object.keys(I18N).forEach(function(k){ var loc=VG55_I18N[k]||{}, base=VG55_I18N.en; Object.keys(base).forEach(function(key){ I18N[k][key]=(loc[key]!==undefined?loc[key]:base[key]); }); });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.i18n.v57-cover-and-safety
    Responsibility:
    - Adds V5.7 relabeling, Bluetooth safety warning, private-window guide, Post-it copy,
@@ -1992,7 +2003,7 @@
    - Keep with the Post-it and communication-safety modules.
    Improvement idea:
    - Centralize safety disclaimers so they are not duplicated across modals.
-   ========================================================================== */
+   ==== */
   var VG57_I18N={
     en:{
       modeSimple:"🧭 Simple format", modeExpert:"🧪 Expert format",
@@ -2312,12 +2323,80 @@
   };
   Object.keys(I18N).forEach(function(k){ var loc=VG57_I18N[k]||{}, base=VG57_I18N.en; Object.keys(base).forEach(function(key){ I18N[k][key]=(loc[key]!==undefined?loc[key]:base[key]); }); });
 
+  /* ===================== V5.8 i18n: AURA adaptive FEC (7 languages) ===================== */
+  var VG58_I18N={
+    en:{
+      auraTitle:"🤖 AURA — adaptive error correction",
+      auraDesc:"AURA estimates the noise around you and picks the error-correction strength automatically. It starts light and gets stronger only if a message fails. Every decision is shown below. It learns on this device only and sends nothing.",
+      auraModeLbl:"FEC", auraAuto:"Auto (AURA decides)", auraOff:"Off — fastest, fragile", auraRep:"Repetition ×3", auraHam:"Hamming + interleave", auraRs:"Reed-Solomon (planned)",
+      auraProbe:"🎙 Probe noise", auraProbing:"Listening to ambient noise…", auraProbeFail:"Microphone not available; AURA will use feedback learning instead.",
+      auraNote:"AURA is a transparent heuristic aid, not a guarantee. Reed-Solomon is reserved and ships only after an independent security audit; until then the strongest active mode is Hamming with interleaving.",
+      auraQuality:"Success estimate:", auraNoise:"noise", auraGrade:"Channel:",
+      fecBadge:"Forward error correction (interleaving + Hamming) is applied to resist noise; Reed-Solomon is planned pending audit.", tailTitle:"🧭 Tail-detection (weak signal)", tailDesc:"While \"Detect nearby devices\" is on, tap \"New place\" after you move. If the same anonymous signal keeps reappearing across several places, it is surfaced as a weak signal. Device identifiers are never stored — only an anonymous count.", tailNewPlace:"📍 New place", tailLabel:"Persistent signals:", tailWhy:"This is NOT proof of surveillance. Family or coworker phones recur too, and modern phones randomise their Bluetooth address, so a real tail may be missed and an innocent device may be flagged. Treat it only as a prompt to stay aware.", sentTailWarn:"⚠ weak signal:", sentTailNone:"none", wipeMemLimit:"Honest limit: a web page cannot guarantee physical erasure. The OS may keep copies in swap/pagefile, hibernation images, or SSD remapped blocks beyond a browser's reach. For seizure-grade protection, combine with OS-level full-disk encryption and keep sensitive data off the device when possible."
+    },
+    ko:{
+      auraTitle:"🤖 AURA — 적응형 에러 정정",
+      auraDesc:"AURA는 주변 소음을 추정해 에러 정정 강도를 자동으로 고릅니다. 처음엔 가볍게 시작하고, 메시지가 실패할 때만 더 강해집니다. 모든 결정은 아래에 표시됩니다. 학습은 이 기기 안에서만 이뤄지며 아무것도 전송하지 않습니다.",
+      auraModeLbl:"FEC", auraAuto:"자동 (AURA가 결정)", auraOff:"끔 — 가장 빠르지만 취약", auraRep:"반복 ×3", auraHam:"해밍 + 인터리브", auraRs:"리드-솔로몬 (예정)",
+      auraProbe:"🎙 소음 측정", auraProbing:"주변 소음을 듣는 중…", auraProbeFail:"마이크를 사용할 수 없습니다. AURA는 대신 피드백 학습을 사용합니다.",
+      auraNote:"AURA는 투명한 휴리스틱 보조 도구이며 보장이 아닙니다. 리드-솔로몬은 예약 상태로, 독립 보안 감사 후에만 도입됩니다. 그 전까지 가장 강한 활성 모드는 인터리빙을 적용한 해밍입니다.",
+      auraQuality:"성공 추정:", auraNoise:"소음", auraGrade:"채널:",
+      fecBadge:"잡음에 견디도록 전향 에러 정정(인터리빙 + 해밍)을 적용합니다. 리드-솔로몬은 감사 후 도입 예정입니다.", tailTitle:"🧭 미행 탐지 (약한 신호)", tailDesc:"\"주변 기기 감지\"가 켜진 동안, 장소를 옮길 때마다 \"새 장소\"를 누르세요. 같은 익명 신호가 여러 장소에서 계속 나타나면 약한 신호로 표시됩니다. 기기 식별자는 저장하지 않으며 익명 카운트만 사용합니다.", tailNewPlace:"📍 새 장소", tailLabel:"지속 신호:", tailWhy:"이것은 감시의 증거가 아닙니다. 가족이나 동료의 휴대폰도 반복 관측되며, 최신 폰은 블루투스 주소를 무작위화하므로 실제 미행을 놓치거나 무고한 기기가 표시될 수 있습니다. 경각심을 갖는 신호로만 받아들이세요.", sentTailWarn:"⚠ 약한 신호:", sentTailNone:"없음", wipeMemLimit:"정직한 한계: 웹 페이지는 물리적 삭제를 보장할 수 없습니다. 운영체제가 스왑/페이지파일, 절전 이미지, SSD 재배치 블록에 사본을 브라우저 권한 밖에서 남길 수 있습니다. 압수 수준 보호가 필요하면 OS 전체 디스크 암호화를 병행하고, 가능하면 민감 데이터를 기기에 두지 마세요."
+    },
+    ar:{
+      auraTitle:"🤖 AURA — تصحيح أخطاء تكيّفي",
+      auraDesc:"يقدّر AURA الضوضاء حولك ويختار قوة تصحيح الأخطاء تلقائيًا. يبدأ خفيفًا ويقوى فقط عند فشل الرسالة. تُعرض كل القرارات أدناه. يتعلّم على هذا الجهاز فقط ولا يرسل شيئًا.",
+      auraModeLbl:"FEC", auraAuto:"تلقائي (AURA يقرّر)", auraOff:"إيقاف — الأسرع، هشّ", auraRep:"تكرار ×3", auraHam:"هامينغ + تشابك", auraRs:"ريد-سولومون (مخطط)",
+      auraProbe:"🎙 قياس الضوضاء", auraProbing:"يستمع للضوضاء المحيطة…", auraProbeFail:"الميكروفون غير متاح؛ سيستخدم AURA التعلّم بالتغذية الراجعة.",
+      auraNote:"AURA أداة استدلالية شفافة وليست ضمانًا. ريد-سولومون محجوز ولا يُشحن إلا بعد تدقيق أمني مستقل؛ حتى ذلك الحين أقوى وضع فعّال هو هامينغ مع التشابك.",
+      auraQuality:"تقدير النجاح:", auraNoise:"ضوضاء", auraGrade:"القناة:",
+      fecBadge:"يُطبَّق تصحيح الأخطاء الأمامي (تشابك + هامينغ) لمقاومة الضوضاء؛ ريد-سولومون مخطط بانتظار التدقيق.", tailTitle:"🧭 كشف الملاحقة (إشارة ضعيفة)", tailDesc:"أثناء تشغيل اكتشاف الأجهزة القريبة، اضغط مكان جديد بعد التنقل. إذا ظلّت الإشارة المجهولة نفسها تظهر عبر عدة أماكن، تُعرض كإشارة ضعيفة. لا تُخزَّن المعرّفات — عدّ مجهول فقط.", tailNewPlace:"📍 مكان جديد", tailLabel:"إشارات مستمرة:", tailWhy:"هذا ليس دليلًا على المراقبة. هواتف العائلة أو الزملاء تتكرر أيضًا، وتعشّي الهواتف الحديثة عنوان البلوتوث، فقد تُفوَّت ملاحقة حقيقية ويُعلَّم جهاز بريء. اعتبره تنبيهًا للانتباه فقط.", sentTailWarn:"⚠ إشارة ضعيفة:", sentTailNone:"لا شيء", wipeMemLimit:"حد صادق: لا تستطيع صفحة الويب ضمان المحو الفيزيائي. قد يحتفظ النظام بنسخ في ملف المبادلة أو صور السبات أو كتل SSD خارج متناول المتصفح. للحماية بمستوى المصادرة، اجمعه مع تشفير القرص الكامل، وأبقِ البيانات الحساسة خارج الجهاز قدر الإمكان."
+    },
+    zh:{
+      auraTitle:"🤖 AURA — 自适应纠错",
+      auraDesc:"AURA 估计你周围的噪声并自动选择纠错强度。它从轻量开始，仅在消息失败时才增强。所有决策都显示在下方。它只在本设备上学习，不发送任何内容。",
+      auraModeLbl:"纠错", auraAuto:"自动（AURA 决定）", auraOff:"关闭 — 最快但脆弱", auraRep:"重复 ×3", auraHam:"汉明 + 交织", auraRs:"里德-所罗门（计划中）",
+      auraProbe:"🎙 探测噪声", auraProbing:"正在聆听环境噪声…", auraProbeFail:"麦克风不可用；AURA 将改用反馈学习。",
+      auraNote:"AURA 是透明的启发式辅助，并非保证。里德-所罗门为预留功能，仅在独立安全审计后发布；在此之前最强的活动模式是带交织的汉明码。",
+      auraQuality:"成功估计：", auraNoise:"噪声", auraGrade:"信道：",
+      fecBadge:"应用前向纠错（交织 + 汉明）以抵抗噪声；里德-所罗门计划在审计后引入。", tailTitle:"🧭 跟踪检测（弱信号）", tailDesc:"在开启检测附近设备时，每次移动后点击新地点。若同一匿名信号在多个地点反复出现，将作为弱信号显示。绝不存储标识，只用匿名计数。", tailNewPlace:"📍 新地点", tailLabel:"持续信号：", tailWhy:"这不是监视的证据。家人或同事的手机也会反复出现，且现代手机会随机化蓝牙地址，因此可能漏掉真正的跟踪或误标无辜设备。仅作为提高警觉的提示。", sentTailWarn:"⚠ 弱信号：", sentTailNone:"无", wipeMemLimit:"诚实的限制：网页无法保证物理擦除。操作系统可能在交换文件、休眠映像或 SSD 重映射块中保留副本。若需查抄级保护，请结合全盘加密，并尽量不在设备上保留敏感数据。"
+    },
+    ja:{
+      auraTitle:"🤖 AURA — 適応的誤り訂正",
+      auraDesc:"AURAは周囲の雑音を推定し、誤り訂正の強度を自動で選びます。軽い設定から始め、メッセージが失敗したときだけ強くなります。すべての判断は下に表示されます。学習はこの端末内だけで行われ、何も送信しません。",
+      auraModeLbl:"FEC", auraAuto:"自動（AURAが決定）", auraOff:"オフ — 最速だが脆弱", auraRep:"反復 ×3", auraHam:"ハミング + インターリーブ", auraRs:"リード・ソロモン（予定）",
+      auraProbe:"🎙 雑音を測定", auraProbing:"周囲の雑音を聞いています…", auraProbeFail:"マイクが使えません。AURAは代わりにフィードバック学習を使います。",
+      auraNote:"AURAは透明なヒューリスティック補助であり、保証ではありません。リード・ソロモンは予約済みで、独立したセキュリティ監査の後にのみ搭載します。それまでの最強の有効モードはインターリーブ付きハミングです。",
+      auraQuality:"成功推定：", auraNoise:"雑音", auraGrade:"チャネル：",
+      fecBadge:"雑音に耐えるため前方誤り訂正（インターリーブ + ハミング）を適用します。リード・ソロモンは監査後に導入予定です。", tailTitle:"🧭 尾行検知（弱い信号）", tailDesc:"周辺デバイス検出がオンの間、移動したら新しい場所を押してください。同じ匿名信号が複数の場所で繰り返し現れると弱い信号として表示します。識別子は保存せず匿名カウントのみ。", tailNewPlace:"📍 新しい場所", tailLabel:"持続信号：", tailWhy:"これは監視の証拠ではありません。家族や同僚の端末も繰り返し現れ、最近の端末はBluetoothアドレスをランダム化するため、実際の尾行を見逃したり無関係な端末を誤検知することがあります。注意を促す合図としてのみ扱ってください。", sentTailWarn:"⚠ 弱い信号：", sentTailNone:"なし", wipeMemLimit:"正直な限界：ウェブページは物理的消去を保証できません。OSがスワップ、休止状態イメージ、SSD再マップブロックにコピーを残す場合があります。押収レベルの保護にはフルディスク暗号化を併用し、可能な限り機密データを端末に残さないでください。"
+    },
+    es:{
+      auraTitle:"🤖 AURA — corrección de errores adaptativa",
+      auraDesc:"AURA estima el ruido a tu alrededor y elige automáticamente la fuerza de corrección de errores. Empieza ligera y solo se refuerza si un mensaje falla. Cada decisión se muestra abajo. Aprende solo en este dispositivo y no envía nada.",
+      auraModeLbl:"FEC", auraAuto:"Auto (decide AURA)", auraOff:"Apagado — el más rápido, frágil", auraRep:"Repetición ×3", auraHam:"Hamming + entrelazado", auraRs:"Reed-Solomon (planeado)",
+      auraProbe:"🎙 Medir ruido", auraProbing:"Escuchando el ruido ambiente…", auraProbeFail:"Micrófono no disponible; AURA usará aprendizaje por retroalimentación.",
+      auraNote:"AURA es una ayuda heurística transparente, no una garantía. Reed-Solomon está reservado y solo se incluirá tras una auditoría de seguridad independiente; hasta entonces el modo activo más fuerte es Hamming con entrelazado.",
+      auraQuality:"Estimación de éxito:", auraNoise:"ruido", auraGrade:"Canal:",
+      fecBadge:"Se aplica corrección de errores hacia delante (entrelazado + Hamming) para resistir el ruido; Reed-Solomon está planeado a la espera de auditoría.", tailTitle:"🧭 Detección de seguimiento (señal débil)", tailDesc:"Con Detectar dispositivos cercanos activado, pulsa Nuevo lugar tras desplazarte. Si la misma señal anónima reaparece en varios lugares, se muestra como señal débil. Nunca se guardan identificadores; solo un recuento anónimo.", tailNewPlace:"📍 Nuevo lugar", tailLabel:"Señales persistentes:", tailWhy:"Esto NO es prueba de vigilancia. Los teléfonos de familiares o colegas también reaparecen, y los móviles modernos aleatorizan su dirección Bluetooth, por lo que puede pasarse por alto un seguimiento real o marcarse un dispositivo inocente. Tómalo solo como un aviso.", sentTailWarn:"⚠ señal débil:", sentTailNone:"ninguna", wipeMemLimit:"Límite honesto: una página web no puede garantizar el borrado físico. El sistema operativo puede conservar copias en swap, hibernación o bloques remapeados de SSD. Para protección frente a incautación, combínalo con cifrado de disco completo y mantén los datos sensibles fuera del dispositivo."
+    },
+    fr:{
+      auraTitle:"🤖 AURA — correction d'erreurs adaptative",
+      auraDesc:"AURA estime le bruit autour de vous et choisit automatiquement la force de correction d'erreurs. Elle commence légère et ne se renforce que si un message échoue. Chaque décision est affichée ci-dessous. Elle apprend uniquement sur cet appareil et n'envoie rien.",
+      auraModeLbl:"FEC", auraAuto:"Auto (AURA décide)", auraOff:"Désactivé — le plus rapide, fragile", auraRep:"Répétition ×3", auraHam:"Hamming + entrelacement", auraRs:"Reed-Solomon (prévu)",
+      auraProbe:"🎙 Sonder le bruit", auraProbing:"Écoute du bruit ambiant…", auraProbeFail:"Micro indisponible ; AURA utilisera l'apprentissage par retour.",
+      auraNote:"AURA est une aide heuristique transparente, pas une garantie. Reed-Solomon est réservé et n'est livré qu'après un audit de sécurité indépendant ; jusque-là le mode actif le plus fort est Hamming avec entrelacement.",
+      auraQuality:"Estimation de réussite :", auraNoise:"bruit", auraGrade:"Canal :",
+      fecBadge:"Une correction d'erreurs directe (entrelacement + Hamming) est appliquée pour résister au bruit ; Reed-Solomon est prévu après audit.", tailTitle:"🧭 Détection de filature (signal faible)", tailDesc:"Quand Détecter les appareils proches est activé, appuyez sur Nouveau lieu après vous être déplacé. Si le même signal anonyme réapparaît à plusieurs endroits, il est signalé comme signal faible. Les identifiants ne sont jamais stockés — seulement un comptage anonyme.", tailNewPlace:"📍 Nouveau lieu", tailLabel:"Signaux persistants :", tailWhy:"Ce n'est PAS une preuve de surveillance. Les téléphones de la famille ou des collègues réapparaissent aussi, et les téléphones modernes randomisent leur adresse Bluetooth, donc une vraie filature peut être manquée et un appareil innocent signalé. À prendre seulement comme un avertissement.", sentTailWarn:"⚠ signal faible :", sentTailNone:"aucun", wipeMemLimit:"Limite honnête : une page web ne peut pas garantir l'effacement physique. Le système peut conserver des copies dans le swap, les images de veille ou les blocs réalloués du SSD. Pour une protection face à une saisie, combinez avec le chiffrement intégral du disque et gardez les données sensibles hors de l'appareil."
+    }
+  };
+  Object.keys(I18N).forEach(function(k){ var loc=VG58_I18N[k]||{}, base=VG58_I18N.en; Object.keys(base).forEach(function(key){ I18N[k][key]=(loc[key]!==undefined?loc[key]:base[key]); }); });
+
   var lang="en";
   /* Lookup a localized string by key.
      Improvement idea: in development builds, report missing keys to the module index. */
   function t(k){ var L=I18N[lang]||I18N.en; return (L[k]!==undefined)?L[k]:(I18N.en[k]!==undefined?I18N.en[k]:k); }
 
-  /* ============================================================================
+  /* ====
    MODULE: js.dom.refs-and-shared-state
    Responsibility:
    - Caches DOM references and initializes shared editor state.
@@ -2327,7 +2406,7 @@
    - Replace direct globals with feature-scoped references when splitting files.
    Improvement idea:
    - Add a runtime assertion that reports missing IDs during development.
-   ========================================================================== */
+   ==== */
   var $=function(id){ return document.getElementById(id); };
   var wrap=$("mltWrap"), toolbar=$("mltToolbar"),
       sheetA=$("mltSheetA"), sheetB=$("mltSheetB"),
@@ -2347,7 +2426,7 @@
   try{ document.execCommand("defaultParagraphSeparator",false,"p"); }catch(e){}
   try{ document.execCommand("styleWithCSS",false,true); }catch(e){}
 
-  /* ============================================================================
+  /* ====
    MODULE: js.editor.color-swatches
    Responsibility:
    - Builds quick color swatches and applies text color to the active editor sheet.
@@ -2357,7 +2436,7 @@
    - Can be removed if a minimal plain-text editor build is needed.
    Improvement idea:
    - Make palette data configurable and add accessible color names.
-   ========================================================================== */
+   ==== */
   var RAINBOW=[["#e11d1d"],["#f08000"],["#f2c200"],["#1faa3f"],["#1763d6"],["#243a8e"],["#7a2bd6"],["#ffffff"],["#000000"]];
   RAINBOW.forEach(function(o){
     var b=document.createElement("button"); b.type="button";
@@ -2370,7 +2449,7 @@
     run("foreColor",b.getAttribute("data-color")); foreInp.value=b.getAttribute("data-color");
   });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.i18n.runtime
    Responsibility:
    - Applies translated text, title attributes, placeholders, direction, and dynamic labels.
@@ -2380,7 +2459,7 @@
    - This is the adapter between static markup and translated UI.
    Improvement idea:
    - Add missing-key diagnostics in development mode.
-   ========================================================================== */
+   ==== */
   /* Apply the active language across declarative `data-i18n*` attributes.
      Extraction note: this is the only function that should directly translate static DOM.
      Improvement idea: cache translated nodes so large modal libraries do not re-scan. */
@@ -2408,7 +2487,7 @@
   }
   langSel.addEventListener("change",function(){ lang=langSel.value; applyLang(); });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.editor.rich-text-formatting
    Responsibility:
    - Wraps `document.execCommand` formatting operations for the contenteditable sheets.
@@ -2418,7 +2497,7 @@
    - Extract with toolbar buttons and sheet state.
    Improvement idea:
    - Replace deprecated `execCommand` with Range/Selection-based formatting.
-   ========================================================================== */
+   ==== */
   /* Execute a rich-text command against the active sheet.
      Extraction note: replace this adapter first if moving away from deprecated execCommand.
      Improvement idea: implement Range-based formatting for modern browser compatibility. */
@@ -2448,7 +2527,7 @@
   foreInp.addEventListener("input",function(){ run("foreColor",foreInp.value); });
   backInp.addEventListener("input",function(){ run("hiliteColor",backInp.value); });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.layout.controls
    Responsibility:
    - Handles page width, body font size, PC/mobile mode, and collapsed toolbar state.
@@ -2458,7 +2537,7 @@
    - Keep with CSS layout tokens and Simple/Expert module.
    Improvement idea:
    - Persist layout preference in memory-only session state.
-   ========================================================================== */
+   ==== */
   function applyPageW(){ wrap.style.setProperty("--mlt-sheet-w",pageW.value+"px"); pageWVal.textContent=pageW.value+" px"; }
   function applyPageFs(){ wrap.style.setProperty("--mlt-sheet-fs",pageFs.value+"px"); pageFsVal.textContent=pageFs.value+" px"; }
   pageW.addEventListener("input",applyPageW);
@@ -2476,7 +2555,7 @@
     this.textContent=wrap.classList.contains("mlt-folded")?t("unfold"):t("fold");
   });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.source-viewer.code-mode
    Responsibility:
    - Converts source text into read-only code view with line numbers and scan flags.
@@ -2486,7 +2565,7 @@
    - This module can become a standalone read-only code viewer.
    Improvement idea:
    - Add optional syntax-highlighting and line-wrap controls.
-   ========================================================================== */
+   ==== */
   $("mltCodeToggle").addEventListener("click",function(){
     if(!codeView){ enterCodeView(); } else { exitCodeView(); }
   });
@@ -2524,7 +2603,7 @@
     sheetA.innerHTML=""; sheetA.appendChild(tbl);
   }
 
-  /* ============================================================================
+  /* ====
    MODULE: js.editor.images.insert
    Responsibility:
    - Inserts local image files as Data URLs into the active sheet.
@@ -2534,7 +2613,7 @@
    - Remove this module for a text-only secure build.
    Improvement idea:
    - Add image-size compression before embedding large Data URLs.
-   ========================================================================== */
+   ==== */
   fileInp.addEventListener("change",function(){ var f=fileInp.files; if(f&&f.length) addImageFiles(f,null,activeSheet); fileInp.value=""; });
   /* Read selected image files locally and insert them as Data URLs.
      Privacy note: no image bytes leave the device in this module. */
@@ -2572,7 +2651,7 @@
     return null;
   }
 
-  /* ============================================================================
+  /* ====
    MODULE: js.input.drag-drop-router
    Responsibility:
    - Routes dropped files to image insertion or source-code loading.
@@ -2582,7 +2661,7 @@
    - Keep with supported-file policy comments.
    Improvement idea:
    - Show a preflight file summary before replacing current content.
-   ========================================================================== */
+   ==== */
   sheets.forEach(function(s){
     s.addEventListener("dragover",function(ev){ ev.preventDefault(); s.classList.add("mlt-drag"); });
     s.addEventListener("dragleave",function(){ s.classList.remove("mlt-drag"); });
@@ -2598,7 +2677,7 @@
   });
   function isTextFile(f){ return /\.(html?|txt|md|js|css|json|xml|csv|svg)$/i.test(f.name) || /^text\//.test(f.type) || f.type===""; }
 
-  /* ============================================================================
+  /* ====
    MODULE: js.editor.images.resize-align-delete
    Responsibility:
    - Selects images inside the sheet and exposes size/alignment/delete controls.
@@ -2608,7 +2687,7 @@
    - Extract with image CSS and image toolbar markup.
    Improvement idea:
    - Add keyboard-accessible image selection handles.
-   ========================================================================== */
+   ==== */
   sheets.forEach(function(s){
     s.addEventListener("click",function(ev){
       if(codeView) return;
@@ -2631,7 +2710,7 @@
     if(btn.id==="mltImgDel"){ selectedImg.remove(); deselectImage(); updateStat(); showToast("tImgDeleted"); }
   });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.editor.bilingual-and-shortcuts
    Responsibility:
    - Toggles two-column EN/KO mode and provides common formatting shortcuts.
@@ -2641,7 +2720,7 @@
    - Remove this module for a single-column minimal editor build.
    Improvement idea:
    - Make column labels language-configurable.
-   ========================================================================== */
+   ==== */
   $("mltBiToggle") && $("mltBiToggle").addEventListener("click",function(){
     biMode=!biMode; wrap.classList.toggle("mlt-bi",biMode); this.classList.toggle("mlt-on",biMode); updateStat();
   });
@@ -2652,7 +2731,7 @@
     else if(k==="u"){ ev.preventDefault(); run("underline"); }
   });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.editor.stats
    Responsibility:
    - Calculates character count and approximate page count.
@@ -2662,12 +2741,12 @@
    - A tiny optional module useful in most builds.
    Improvement idea:
    - Add word count and byte count modes.
-   ========================================================================== */
+   ==== */
   function textLen(el){ return (el.innerText||"").replace(/\s/g,"").length; }
   function updateStat(){ var n=textLen(sheetA)+(biMode?textLen(sheetB):0); var p=Math.max(1,Math.ceil(n/1800)); stat.innerHTML=t("statFmt")(n,p); }
   sheets.forEach(function(s){ s.addEventListener("input",updateStat); });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.ui.toast
    Responsibility:
    - Displays short non-blocking status messages.
@@ -2677,12 +2756,12 @@
    - Reusable by every feature module.
    Improvement idea:
    - Add an aria-live queue for screen reader timing.
-   ========================================================================== */
+   ==== */
   var toastTimer;
   function showToast(key){ var m=t(key); toast.textContent=(typeof m==="string")?m:key; toast.classList.add("mlt-show");
     clearTimeout(toastTimer); toastTimer=setTimeout(function(){ toast.classList.remove("mlt-show"); },2600); }
 
-  /* ============================================================================
+  /* ====
    MODULE: js.export.save-and-sanitize
    Responsibility:
    - Builds sanitized HTML, TXT, and Markdown downloads.
@@ -2692,7 +2771,7 @@
    - This is the file-export module. Keep sanitization with HTML export.
    Improvement idea:
    - Move sanitizer policy to a testable allowlist module.
-   ========================================================================== */
+   ==== */
   function curText(){ return codeView?codeRaw:(sheetA.innerText+(biMode?("\n\n----------\n\n"+sheetB.innerText):"")); }
   function sheetFont(sheet,fb){ return (sheet.style.fontFamily&&sheet.style.fontFamily.length)?sheet.style.fontFamily:fb; }
   function buildHtmlDoc(){
@@ -2800,7 +2879,7 @@
   $("mltSaveAsMd").addEventListener("click",function(){ downloadBlob(buildMarkdown(),"doc_"+stamp()+".md","text/markdown;charset=utf-8"); closeModal("mltSaveModal"); showToast("tSavedMd"); });
   $("mltSaveCancel").addEventListener("click",function(){ closeModal("mltSaveModal"); });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.import.source-open
    Responsibility:
    - Opens supported text/source files and loads them as editable source text.
@@ -2810,7 +2889,7 @@
    - This can be extracted with miniGit for a source-review-only build.
    Improvement idea:
    - Detect encoding and warn on binary-looking content.
-   ========================================================================== */
+   ==== */
   $("mltOpen").addEventListener("click",function(){ openInp.click(); });
   openInp.addEventListener("change",function(){ var f=openInp.files&&openInp.files[0]; if(f) loadFileAsSource(f); openInp.value=""; });
   /* Load a supported text/source file as text instead of executing it.
@@ -2836,7 +2915,7 @@
     deselectImage(); updateStat(); sheetA.scrollIntoView({block:"nearest"}); showToast("tLoaded");
   }
 
-  /* ============================================================================
+  /* ====
    MODULE: js.privacy.noise-fill
    Responsibility:
    - Generates meaningless local text for overwriting visible content.
@@ -2846,7 +2925,7 @@
    - Keep with wipe/privacy utilities if extracting safety tools.
    Improvement idea:
    - Make overwrite passes configurable but clearly documented.
-   ========================================================================== */
+   ==== */
   var NOISE_RANGES=[[0x21,0x7e],[0xa1,0x24f],[0x370,0x3ff],[0x400,0x4ff],[0x2200,0x22ff],[0x2500,0x257f],[0x2580,0x259f],[0x25a0,0x25ff],[0x3041,0x3096],[0xac00,0xd7a3]];
   function randChar(){ var rg=NOISE_RANGES[(Math.random()*NOISE_RANGES.length)|0]; var code=rg[0]+((Math.random()*(rg[1]-rg[0]+1))|0); try{ return String.fromCodePoint(code); }catch(e){ return "?"; } }
   function makeNoiseParagraph(){ var len=120+((Math.random()*160)|0), out=""; for(var i=0;i<len;i++){ out+=randChar(); if(Math.random()<0.16) out+=" "; } return out; }
@@ -2864,7 +2943,7 @@
     sheetA.appendChild(frag); deselectImage(); updateStat(); showToast("tNoiseDone");
   });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.export.copy-plain-text
    Responsibility:
    - Copies the current plain text with clipboard fallback.
@@ -2874,14 +2953,14 @@
    - Small reusable export helper.
    Improvement idea:
    - Add explicit copy format choices: plain, source, HTML.
-   ========================================================================== */
+   ==== */
   $("mltCopyText").addEventListener("click",function(){
     var txt=curText(); function done(){ showToast("tCopied"); }
     if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done).catch(fb); } else { fb(); }
     function fb(){ var ta=document.createElement("textarea"); ta.value=txt; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(e){ showToast("tCopyFail"); } document.body.removeChild(ta); }
   });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.integrity.hash-validate
    Responsibility:
    - Computes MD5, CRC32, and WebCrypto SHA hashes locally and compares expected values.
@@ -2891,7 +2970,7 @@
    - Can be shipped as a standalone offline integrity tool.
    Improvement idea:
    - Prefer SHA-256 in UI and label MD5/SHA-1 as legacy compatibility checks.
-   ========================================================================== */
+   ==== */
   // CRC32 (table)
   var CRC_TBL=(function(){ var c,t2=[]; for(var n=0;n<256;n++){ c=n; for(var k=0;k<8;k++){ c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1); } t2[n]=c>>>0; } return t2; })();
   function crc32(bytes){ var c=0xFFFFFFFF; for(var i=0;i<bytes.length;i++){ c=CRC_TBL[(c^bytes[i])&0xFF]^(c>>>8); } c=(c^0xFFFFFFFF)>>>0; return ("00000000"+c.toString(16)).slice(-8); }
@@ -2969,7 +3048,7 @@
   $("mltHashClose").addEventListener("click",function(){ closeModal("mltHashModal"); });
   $("mltHashCloseTop").addEventListener("click",function(){ closeModal("mltHashModal"); });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.security.static-risk-scan
    Responsibility:
    - Scans source text with transparent local rules and jumps to flagged lines.
@@ -2979,7 +3058,7 @@
    - This is a white-box helper, not a guarantee.
    Improvement idea:
    - Add rule severity explanations and exportable scan reports.
-   ========================================================================== */
+   ==== */
   var SCAN_RULES=[
     {re:/\b(fetch|XMLHttpRequest|WebSocket|navigator\.sendBeacon|EventSource)\b/, w:"hi", k:0},
     {re:/\b(eval|Function\s*\(|new\s+Function|setTimeout\s*\(\s*["'`]|setInterval\s*\(\s*["'`])/, w:"hi", k:1},
@@ -3046,7 +3125,7 @@
   });
   $("mltAiClose").addEventListener("click",function(){ closeModal("mltAiModal"); });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.privacy.secure-wipe
    Responsibility:
    - Performs best-effort in-page overwrite, PBKDF2 work, and editor clearing.
@@ -3056,7 +3135,7 @@
    - Keep disclaimers with this module; it cannot erase OS-level copies.
    Improvement idea:
    - Add a wipe checklist for saved downloads and browser history.
-   ========================================================================== */
+   ==== */
   $("mltWipeBtn").addEventListener("click",function(){ $("mltWipeConfirm").checked=false; $("mltWipeProg").textContent=""; openModal("mltWipeModal"); });
   $("mltWipeCancel").addEventListener("click",function(){ closeModal("mltWipeModal"); });
   $("mltWipeGo").addEventListener("click",function(){
@@ -3084,7 +3163,7 @@
     } else { finish(); }
   });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.health.amsler-grid-modal
    Responsibility:
    - Opens and closes the local Amsler grid self-check modal.
@@ -3094,11 +3173,11 @@
    - Fully optional; remove for non-health builds.
    Improvement idea:
    - Add a stronger disclaimer and links in documentation, not in offline runtime.
-   ========================================================================== */
+   ==== */
   $("mltEyeBtn").addEventListener("click",function(){ openModal("mltEyeModal"); });
   $("mltEyeOk").addEventListener("click",function(){ closeModal("mltEyeModal"); });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.layout.window-scale
    Responsibility:
    - Applies whole-editor scale and device-specific defaults.
@@ -3108,7 +3187,7 @@
    - Keep with layout controls.
    Improvement idea:
    - Avoid scaling fixed modals if future accessibility testing suggests it.
-   ========================================================================== */
+   ==== */
   var scaleInp=$("mltScale"), scaleVal=$("mltScaleVal");
   function applyScale(){ var s=parseInt(scaleInp.value,10)/100; wrap.style.setProperty("--mlt-scale",s); scaleVal.textContent=scaleInp.value+"%"; }
   scaleInp.addEventListener("input",applyScale);
@@ -3122,7 +3201,7 @@
   $("mltDevPc").addEventListener("click",function(){ scaleInp.value=115; applyScale(); });
   $("mltDevMobile").addEventListener("click",function(){ scaleInp.value=100; applyScale(); });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.transfer.bluetooth-ultrasound
    Responsibility:
    - Recommends channels, plays ultrasound FSK, and attempts Web Bluetooth GATT writes.
@@ -3132,7 +3211,7 @@
    - Separate transport selection from transport implementations in a future split.
    Improvement idea:
    - Add explicit packet framing docs and receiver compatibility tests.
-   ========================================================================== */
+   ==== */
   // Ultrasound FSK modem parameters.
   var MARK_FREQ=18000, SPACE_FREQ=17000, BAUD=100;       // 18kHz=1, 17kHz=0, 100bps
   var US_MAX_BYTES=280;                                  // Recommended maximum ultrasound payload size.
@@ -3282,7 +3361,7 @@
 
 
 
-  /* ============================================================================
+  /* ====
    MODULE: js.vitalguard.sos-receive-relay-danger
    Responsibility:
    - Adds package encoding, receive preview, group relay, danger monitor, SOS, and panic flows.
@@ -3292,7 +3371,7 @@
    - This is a feature bundle; split into receive, relay, danger, SOS, and panic submodules.
    Improvement idea:
    - Move permission checks into a shared capability service.
-   ========================================================================== */
+   ==== */
   var vgState={
     inbox:[], outbox:[], lastReceivedText:"", lastPackage:null,
     sos:{recipients:"", locMode:"coarse", manualLocation:"", ready:false, lastSentAt:0},
@@ -3415,6 +3494,25 @@
     ];
     if(VG_HELP_TOPICS.en) VG_HELP_TOPICS.en=VG_HELP_TOPICS.en.concat(extraEn);
     if(VG_HELP_TOPICS.ko) VG_HELP_TOPICS.ko=VG_HELP_TOPICS.ko.concat(extraKo);
+
+    var v58En=[
+      {id:"firststeps",title:"First time? Start here (3 steps)",body:"1) WRITE: type in the editor like any notepad; save as TXT, MD, or HTML to keep it. 2) HIDE: if someone is near, tap Post-it — the screen becomes an ordinary diet calorie calculator, and what you typed lives only in memory. 3) LEAVE SAFELY: close the browser tab and the in-memory content disappears. Nothing is uploaded; this tool never contacts the internet."},
+      {id:"fecPlain",title:"What is error correction (FEC)?",body:"Ultrasound is sound, so a noisy room can break some letters. Forward error correction adds a little extra information so the receiver rebuilds broken parts automatically, helping short messages arrive even when it is noisy. It is not magic: if it is very loud you may still need to send again. The AURA helper starts light and gets stronger only if a message fails."},
+      {id:"emergencyRadio",title:"Emergency Radio (short codes)",body:"Long text is hard to send by ultrasound. Instead, press a short pre-set code (for example SAFE, MEDIC NEEDED, BEING FOLLOWED). Short codes are fast and survive noise far better than full sentences. The codebook is public and built into this page, so a receiver running this same tool understands it."},
+      {id:"tailHelp",title:"If you think you are being followed",body:"Stay calm and move to a public, lit place. In Emergency Radio, send BEING FOLLOWED. If you have trusted contacts, share a MEET POINT or SAFE HOUSE code. Sentinel's tail-detection is only a weak hint, not proof — innocent phones recur too. If you must erase fast, open Post-it and tap any calorie number to wipe in-memory data instantly."},
+      {id:"postitWipe",title:"Post-it cover and emergency wipe",body:"The Post-it tab looks like a normal diet calculator with 50 dishes. To return to the editor you must tap the one food you chose when you first opened it. WARNING: tapping a calorie NUMBER performs an emergency wipe — it instantly destroys in-memory data and scrambles the page. Use it only when you truly need to erase everything fast."},
+      {id:"memoryLimit",title:"Honest limit: what wipe cannot do",body:"Wipe clears what this page holds in memory and the on-screen content. It cannot reach copies the operating system may keep in swap files, hibernation images, or SSD remapped blocks. For protection against device seizure, also use the operating system's full-disk encryption, and when possible keep sensitive data off the device entirely."}
+    ];
+    var v58Ko=[
+      {id:"firststeps",title:"처음이신가요? 3단계로 시작",body:"1) 쓰기: 메모장처럼 편집기에 입력하고, 보관하려면 TXT/MD/HTML로 저장하세요. 2) 숨기기: 주변에 사람이 있으면 포스트잇을 누르세요 — 화면이 평범한 다이어트 칼로리 계산기로 바뀌고 입력한 내용은 메모리에만 남습니다. 3) 안전하게 떠나기: 브라우저 탭을 닫으면 메모리 내용이 사라집니다. 아무것도 업로드되지 않으며, 이 도구는 인터넷에 접속하지 않습니다."},
+      {id:"fecPlain",title:"에러 정정(FEC)이란?",body:"초음파는 소리라서 주변이 시끄러우면 글자가 일부 깨질 수 있습니다. 전향 에러 정정은 약간의 추가 정보를 더해 받는 쪽이 깨진 부분을 자동 복원하게 도와, 시끄러운 곳에서도 짧은 메시지가 도착하게 합니다. 만능은 아니어서 매우 시끄러우면 다시 보내야 할 수 있습니다. AURA는 가볍게 시작하고 실패할 때만 더 강해집니다."},
+      {id:"emergencyRadio",title:"무전 응급 신호(짧은 코드)",body:"긴 글은 초음파로 보내기 어렵습니다. 대신 미리 정해진 짧은 코드(예: 안전함, 의료 지원 필요, 미행당하는 중)를 누르세요. 짧은 코드는 빠르고 잡음에도 문장보다 훨씬 잘 견딥니다. 코드북은 이 페이지에 공개되어 있어, 같은 도구를 쓰는 수신자가 이해합니다."},
+      {id:"tailHelp",title:"미행당한다고 느낄 때",body:"침착하게 공개된 밝은 장소로 이동하세요. 무전 응급 신호에서 '미행당하는 중'을 보내세요. 신뢰하는 연락처가 있으면 '접선 지점'이나 '안전가옥' 코드를 공유하세요. 센티넬의 미행 탐지는 증거가 아니라 약한 힌트일 뿐이며, 무고한 휴대폰도 반복 관측됩니다. 빠르게 지워야 한다면 포스트잇을 열고 칼로리 숫자를 눌러 메모리 데이터를 즉시 삭제하세요."},
+      {id:"postitWipe",title:"포스트잇 위장과 긴급 삭제",body:"포스트잇 탭은 50개 음식이 있는 평범한 다이어트 계산기처럼 보입니다. 편집기로 돌아가려면 처음 열 때 고른 음식 하나를 눌러야 합니다. 경고: 칼로리 숫자를 누르면 긴급 삭제가 실행되어 메모리 데이터를 즉시 파괴하고 페이지를 망가뜨립니다. 정말로 모든 것을 빠르게 지워야 할 때만 사용하세요."},
+      {id:"memoryLimit",title:"정직한 한계: 삭제가 못 하는 것",body:"삭제는 이 페이지가 메모리에 가진 내용과 화면 내용을 지웁니다. 그러나 운영체제가 스왑 파일, 절전 이미지, SSD 재배치 블록에 남길 수 있는 사본까지는 도달하지 못합니다. 기기 압수에 대비하려면 운영체제의 전체 디스크 암호화도 함께 사용하고, 가능하면 민감 데이터를 기기에 아예 두지 마세요."}
+    ];
+    if(VG_HELP_TOPICS.en) VG_HELP_TOPICS.en=VG_HELP_TOPICS.en.concat(v58En);
+    if(VG_HELP_TOPICS.ko) VG_HELP_TOPICS.ko=VG_HELP_TOPICS.ko.concat(v58Ko);
   })();
 
   var vgHelpSeen=false;
@@ -3579,7 +3677,7 @@
 
 
 
-  /* ============================================================================
+  /* ====
    MODULE: js.vitalguard.transfer-wizard-mailbox-visual
    Responsibility:
    - Implements Simple/Expert mode, Transfer Wizard, mailbox, visual grid, NFC, and WebRTC offer.
@@ -3589,7 +3687,7 @@
    - Good candidate for the first real separate module file.
    Improvement idea:
    - Split the wizard estimate model from DOM rendering for easier testing.
-   ========================================================================== */
+   ==== */
   var v55={mode:"simple", payloadMode:"document", lastWizardPkg:null, rtc:null, rtcChannel:null}; window.v55=v55;
   function v55PayloadText(){
     if(v55.payloadMode==="selection"){
@@ -3689,7 +3787,7 @@
   var __oldVgMakePackage=vgMakePackage;
   vgMakePackage=function(kind,text,meta){ var pkg=__oldVgMakePackage(kind,text,meta); pkg.version="5.5"; return pkg; };
 
-  /* ============================================================================
+  /* ====
    MODULE: js.ui.modal-focus-and-dismiss
    Responsibility:
    - Handles backdrop close, Escape close, and simple focus trapping.
@@ -3699,7 +3797,7 @@
    - Reusable UI infrastructure for every modal component.
    Improvement idea:
    - Track nested modals with a stack instead of closing all on Escape.
-   ========================================================================== */
+   ==== */
   document.querySelectorAll('.mlt-modal').forEach(function(modal){
     modal.addEventListener("click",function(ev){ if(ev.target===modal) closeModal(modal.id); });
   });
@@ -3715,7 +3813,7 @@
     }
   });
 
-  /* ============================================================================
+  /* ====
    MODULE: js.sentinel.capability-controls
    Responsibility:
    - Controls Wake Lock, optional BLE advertisement scan, and visibility warnings.
@@ -3725,7 +3823,7 @@
    - Keep capability disclaimers and switch disabled reasons with this module.
    Improvement idea:
    - Add a diagnostics export that records capability status without personal data.
-   ========================================================================== */
+   ==== */
   /* All three switches are user-driven and progressive: each runs only where the
      browser/environment supports it, and says plainly why it cannot otherwise.
      No background scanning happens unless the user explicitly turns a switch on. */
@@ -3755,6 +3853,14 @@
       elDot.className="mlt-dot"+(S.on?"":" mlt-off");
       elScreen.textContent = !canWake ? t("sentNA") : (isOn(swScreen)?(S.wake?t("sentOn"):t("sentRetry")):t("sentOff"));
       elNearby.textContent = !canScan ? t("sentNA") : (isOn(swNearby)?String(Object.keys(S.devices).length):t("sentOff"));
+      [$("mltSentTail"),$("mltSentTailModal")].forEach(function(tailEl){
+        if(!tailEl) return;
+        if(canScan && isOn(swNearby)){
+          var sus=tailSuspects(), places=(S.epoch||0)+1;
+          tailEl.textContent = sus>0 ? (t("sentTailWarn")+" "+sus+" ("+places+"p)") : (t("sentTailNone")+" ("+places+"p)");
+          tailEl.style.color = sus>0 ? "#b5462f" : "var(--mlt-muted)";
+        } else { tailEl.textContent="—"; tailEl.style.color="var(--mlt-muted)"; }
+      });
       var s=Math.floor((Date.now()-S.t0)/1000);
       elElapsed.textContent = s<60 ? (s+"s") : (Math.floor(s/60)+"m "+(s%60)+"s");
     }
@@ -3771,16 +3877,29 @@
     async function scanOn(){
       try{
         S.scan=await navigator.bluetooth.requestLEScan({acceptAllAdvertisements:true});
-        S.adv=function(e){ if(e&&e.device&&e.device.id){ S.devices[e.device.id]=1; render(); } };
+        // V5.8 tail-detection (privacy-preserving, heuristic AID only). We do NOT store
+        // device ids; we keep a one-way short hash count and how many "places" it recurred.
+        S.devices={}; S.persist=S.persist||{}; S.epoch=S.epoch||0;
+        S.adv=function(e){
+          if(!(e&&e.device&&e.device.id)) return;
+          var h=tailHash(String(e.device.id));
+          S.devices[h]=1;
+          var p=S.persist[h]||{hits:0,epochs:{}};
+          p.hits++; p.epochs[S.epoch]=1; S.persist[h]=p;
+          render();
+        };
         navigator.bluetooth.addEventListener("advertisementreceived",S.adv);
         return true;
       }catch(e){ S.scan=null; return false; }
     }
+    function tailHash(s){ var h=5381; for(var i=0;i<s.length;i++){ h=((h<<5)+h+s.charCodeAt(i))>>>0; } return (h%100000).toString(36); }
+    function tailSuspects(){ var n=0; Object.keys(S.persist||{}).forEach(function(h){ if(Object.keys(S.persist[h].epochs||{}).length>=3) n++; }); return n; }
     function scanOff(){
       try{ if(S.scan) S.scan.stop(); }catch(e){}
       if(S.adv){ try{ navigator.bluetooth.removeEventListener("advertisementreceived",S.adv); }catch(e){} S.adv=null; }
-      S.scan=null; S.devices={};
+      S.scan=null; S.devices={}; S.persist={}; S.epoch=0;
     }
+    if($("mltSentNewPlace")) $("mltSentNewPlace").addEventListener("click",function(){ S.epoch=(S.epoch||0)+1; render(); });
 
     /* Browsers auto-release Wake Lock when the tab is hidden; re-acquire on return.
        Also fire the screen-hidden warning if that switch is on. */
@@ -3827,7 +3946,7 @@
 
 
 
-  /* ============================================================================
+  /* ====
    MODULE: js.minigit-radio.local-review
    Responsibility:
    - Adds radio-style compressed text log and memory-only miniGit search/snapshot/diff.
@@ -3837,10 +3956,10 @@
    - Split into `radio-codebook` and `miniGit-memory` modules later.
    Improvement idea:
    - Add snapshot naming and optional patch export while staying memory-only.
-   ========================================================================== */
+   ==== */
   var VG56_I18N={
-    en:{title:"Vitalguard-AI V5.6 — miniGit, no tracking",subtitle:"Local miniGit · zero-dependency · offline · no tracking",openHint:"Supported open files: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, and images. DOCX/PDF are compressed formats and are not opened offline without external libraries.",tHtmlOnly:"Unsupported file. Supported: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, and images.",tDocxNo:"DOCX/PDF need external libraries because they are compressed formats and are not supported in this offline single-file build. Supported: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, and images. Tip: save as Web Page (.html) or plain text, then open it here.",miniGitBtn:"🧩 miniGit",radioLogBtn:"📻 Radio Log",radioTitle:"📻 Radio-style compressed text log",radioDesc:"Use short transparent humanitarian codes for slow ultrasound. The codebook is public and built into this HTML.",radioCodebookTitle:"Codebook quick messages",radioComposeTitle:"Compose",radioPlaceholder:"WATER NEEDED / SAFE / MEDIC NEEDED…",radioRepeatLbl:"Repeat",radioUseDoc:"Use current document text",radioSend:"Send compressed by ultrasound",radioMakeCode:"Create radio code",radioSayAgain:"Say again",radioReceiveTitle:"Decode incoming code",radioDecode:"Decode to log",radioLogTitle:"Memory-only radio log",radioCaveat:"This is not covert military signaling. The codebook is visible, humanitarian, and meant to make slow ultrasound more understandable and reliable.",miniGitTitle:"🧩 miniGit, no tracking",miniGitDesc:"Open, read, search, snapshot, and compare source locally. Snapshots live only in memory and disappear when the page is closed.",miniGitSearchTitle:"Search current source",miniGitSearchPh:"Search text…",miniGitSearchBtn:"Search",miniGitSnapTitle:"Memory snapshots",miniGitSnapBtn:"Save snapshot",miniGitDiffBtn:"Diff current vs latest",miniGitClearBtn:"Clear snapshots",miniGitDiffTitle:"Diff",miniGitCaveat:"miniGit is not GitHub and does not use tracking or persistent storage. Export a TXT/MD/HTML file if you need a durable copy."},
-    ko:{title:"Vitalguard-AI V5.6 — miniGit, no tracking",subtitle:"로컬 miniGit · 무의존성 · 오프라인 · 추적 없음",openHint:"지원 파일: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, 이미지. DOCX/PDF는 압축 형식이라 외부 라이브러리 없이 오프라인에서 열지 않습니다.",tHtmlOnly:"지원하지 않는 파일입니다. 지원: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, 이미지.",tDocxNo:"DOCX/PDF는 압축 형식이라 외부 라이브러리 없이는 이 단일 HTML 오프라인 빌드에서 지원하지 않습니다. 지원: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, 이미지. 팁: 웹 페이지(.html) 또는 일반 텍스트로 저장한 뒤 여세요.",miniGitBtn:"🧩 miniGit",radioLogBtn:"📻 무전기 로그",radioTitle:"📻 무전기식 압축 텍스트 로그",radioDesc:"느린 초음파 전송을 위해 짧고 투명한 인도주의 코드북을 사용합니다. 코드북은 이 HTML 안에 공개되어 있습니다.",radioCodebookTitle:"코드북 빠른 메시지",radioComposeTitle:"작성",radioPlaceholder:"WATER NEEDED / SAFE / MEDIC NEEDED…",radioRepeatLbl:"반복",radioUseDoc:"현재 문서 텍스트 사용",radioSend:"압축 메시지를 초음파로 전송",radioMakeCode:"무전기 코드 생성",radioSayAgain:"다시 송신",radioReceiveTitle:"수신 코드 해독",radioDecode:"로그로 해독",radioLogTitle:"메모리 전용 무전기 로그",radioCaveat:"은밀한 군사 신호통신이 아닙니다. 코드북은 공개·인도주의 목적이며, 느린 초음파를 이해하기 쉽고 안정적으로 쓰기 위한 장치입니다.",miniGitTitle:"🧩 miniGit, no tracking",miniGitDesc:"소스를 로컬에서 열고, 읽고, 검색하고, 스냅샷을 만들고, 비교합니다. 스냅샷은 메모리에만 있으며 페이지를 닫으면 사라집니다.",miniGitSearchTitle:"현재 소스 검색",miniGitSearchPh:"검색어…",miniGitSearchBtn:"검색",miniGitSnapTitle:"메모리 스냅샷",miniGitSnapBtn:"스냅샷 저장",miniGitDiffBtn:"현재 vs 최신 비교",miniGitClearBtn:"스냅샷 비우기",miniGitDiffTitle:"Diff",miniGitCaveat:"miniGit은 GitHub가 아니며 추적이나 영구 저장을 하지 않습니다. 오래 보관하려면 TXT/MD/HTML로 내보내세요."}
+    en:{title:"Vitalguard-AI V5.6 — miniGit, no tracking",subtitle:"Local miniGit · zero-dependency · offline · no tracking",openHint:"Supported open files: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, and images. DOCX/PDF are compressed formats and are not opened offline without external libraries.",tHtmlOnly:"Unsupported file. Supported: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, and images.",tDocxNo:"DOCX/PDF need external libraries because they are compressed formats and are not supported in this offline single-file build. Supported: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, and images. Tip: save as Web Page (.html) or plain text, then open it here.",miniGitBtn:"🧩 miniGit",radioLogBtn:"📻 Emergency Radio",radioTitle:"📻 Radio-style compressed text log",radioDesc:"Use short transparent humanitarian codes for slow ultrasound. The codebook is public and built into this HTML.",radioCodebookTitle:"Codebook quick messages",radioComposeTitle:"Compose",radioPlaceholder:"WATER NEEDED / SAFE / MEDIC NEEDED…",radioRepeatLbl:"Repeat",radioUseDoc:"Use current document text",radioSend:"Send compressed by ultrasound",radioMakeCode:"Create radio code",radioSayAgain:"Say again",radioReceiveTitle:"Decode incoming code",radioDecode:"Decode to log",radioLogTitle:"Memory-only radio log",radioCaveat:"This is not covert military signaling. The codebook is visible, humanitarian, and meant to make slow ultrasound more understandable and reliable.",miniGitTitle:"🧩 miniGit, no tracking",miniGitDesc:"Open, read, search, snapshot, and compare source locally. Snapshots live only in memory and disappear when the page is closed.",miniGitSearchTitle:"Search current source",miniGitSearchPh:"Search text…",miniGitSearchBtn:"Search",miniGitSnapTitle:"Memory snapshots",miniGitSnapBtn:"Save snapshot",miniGitDiffBtn:"Diff current vs latest",miniGitClearBtn:"Clear snapshots",miniGitDiffTitle:"Diff",miniGitCaveat:"miniGit is not GitHub and does not use tracking or persistent storage. Export a TXT/MD/HTML file if you need a durable copy."},
+    ko:{title:"Vitalguard-AI V5.6 — miniGit, no tracking",subtitle:"로컬 miniGit · 무의존성 · 오프라인 · 추적 없음",openHint:"지원 파일: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, 이미지. DOCX/PDF는 압축 형식이라 외부 라이브러리 없이 오프라인에서 열지 않습니다.",tHtmlOnly:"지원하지 않는 파일입니다. 지원: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, 이미지.",tDocxNo:"DOCX/PDF는 압축 형식이라 외부 라이브러리 없이는 이 단일 HTML 오프라인 빌드에서 지원하지 않습니다. 지원: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, 이미지. 팁: 웹 페이지(.html) 또는 일반 텍스트로 저장한 뒤 여세요.",miniGitBtn:"🧩 miniGit",radioLogBtn:"📻 무전 응급 신호",radioTitle:"📻 무전기식 압축 텍스트 로그",radioDesc:"느린 초음파 전송을 위해 짧고 투명한 인도주의 코드북을 사용합니다. 코드북은 이 HTML 안에 공개되어 있습니다.",radioCodebookTitle:"코드북 빠른 메시지",radioComposeTitle:"작성",radioPlaceholder:"WATER NEEDED / SAFE / MEDIC NEEDED…",radioRepeatLbl:"반복",radioUseDoc:"현재 문서 텍스트 사용",radioSend:"압축 메시지를 초음파로 전송",radioMakeCode:"무전기 코드 생성",radioSayAgain:"다시 송신",radioReceiveTitle:"수신 코드 해독",radioDecode:"로그로 해독",radioLogTitle:"메모리 전용 무전기 로그",radioCaveat:"은밀한 군사 신호통신이 아닙니다. 코드북은 공개·인도주의 목적이며, 느린 초음파를 이해하기 쉽고 안정적으로 쓰기 위한 장치입니다.",miniGitTitle:"🧩 miniGit, no tracking",miniGitDesc:"소스를 로컬에서 열고, 읽고, 검색하고, 스냅샷을 만들고, 비교합니다. 스냅샷은 메모리에만 있으며 페이지를 닫으면 사라집니다.",miniGitSearchTitle:"현재 소스 검색",miniGitSearchPh:"검색어…",miniGitSearchBtn:"검색",miniGitSnapTitle:"메모리 스냅샷",miniGitSnapBtn:"스냅샷 저장",miniGitDiffBtn:"현재 vs 최신 비교",miniGitClearBtn:"스냅샷 비우기",miniGitDiffTitle:"Diff",miniGitCaveat:"miniGit은 GitHub가 아니며 추적이나 영구 저장을 하지 않습니다. 오래 보관하려면 TXT/MD/HTML로 내보내세요."}
   };
   ["ar","zh","ja","es","fr"].forEach(function(k){VG56_I18N[k]=Object.assign({},VG56_I18N.en,{title:"Vitalguard-AI V5.6 — miniGit, no tracking"});});
   Object.keys(I18N).forEach(function(k){var loc=VG56_I18N[k]||VG56_I18N.en;Object.keys(VG56_I18N.en).forEach(function(key){I18N[k][key]=(loc[key]!==undefined?loc[key]:VG56_I18N.en[key]);});});
@@ -3850,14 +3969,204 @@
   function v56ByteString(bytes){var s="";for(var i=0;i<bytes.length;i++)s+=String.fromCharCode(bytes[i]);return s;}
   function v56BytesToB64(bytes){return btoa(v56ByteString(bytes)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");}
   function v56B64ToBytes(s){s=String(s||"").trim().replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";var bin=atob(s),out=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)out[i]=bin.charCodeAt(i);return out;}
-  var V56_CODEBOOK=[{c:0x11,key:"WATER NEEDED",ko:"물 필요"},{c:0x12,key:"MEDIC NEEDED",ko:"의료 지원 필요"},{c:0x13,key:"SAFE",ko:"안전함"},{c:0x14,key:"MOVING",ko:"이동 중"},{c:0x15,key:"NEED FOOD",ko:"식량 필요"},{c:0x16,key:"INJURED",ko:"부상자 있음"},{c:0x17,key:"SOS",ko:"SOS"},{c:0x18,key:"NEED SHELTER",ko:"대피처 필요"},{c:0x19,key:"BATTERY LOW",ko:"배터리 부족"},{c:0x1A,key:"SAY AGAIN",ko:"다시 전송"}];
+  var V56_CODEBOOK=[{c:0x11,key:"WATER NEEDED",ko:"물 필요"},{c:0x12,key:"MEDIC NEEDED",ko:"의료 지원 필요"},{c:0x13,key:"SAFE",ko:"안전함"},{c:0x14,key:"MOVING",ko:"이동 중"},{c:0x15,key:"NEED FOOD",ko:"식량 필요"},{c:0x16,key:"INJURED",ko:"부상자 있음"},{c:0x17,key:"SOS",ko:"SOS"},{c:0x18,key:"NEED SHELTER",ko:"대피처 필요"},{c:0x19,key:"BATTERY LOW",ko:"배터리 부족"},{c:0x1A,key:"SAY AGAIN",ko:"다시 전송"},{c:0x1B,key:"BEING FOLLOWED",ko:"미행당하는 중"},{c:0x1C,key:"DETAINED",ko:"구금됨"},{c:0x1D,key:"NEED LAWYER",ko:"변호사 필요"},{c:0x1E,key:"SAFE HOUSE",ko:"안전가옥"},{c:0x1F,key:"MEET POINT",ko:"접선 지점"},{c:0x20,key:"ABORT SCATTER",ko:"중단 해산"},{c:0x21,key:"DEVICE SEIZED",ko:"기기 압수됨"},{c:0x22,key:"DO NOT REPLY",ko:"회신 금지"},{c:0x23,key:"EVIDENCE SAFE",ko:"자료 안전 확보"},{c:0x24,key:"EXFIL NOW",ko:"즉시 탈출"}];
   var V56_DICT=["NEEDED","NEED","WATER","MEDIC","SAFE","MOVING","FOOD","INJURED","SHELTER","BATTERY","LOW","SOS","LOCATION","GROUP","YES","NO"];
+
+  /* MODULE: js.ultrasound-fec — layered FEC for the noisy ultrasound channel.
+     Audit-honest: interleaving + repetition(majority) + Hamming(7,4). RS reserved as
+     FEC_MODE=3 (planned, NOT shipped) until an independent audit validates GF(256).
+     FEC_MODE: 0=none 1=rep×3 2=Hamming+interleave 3=RS(reserved). Pure, deterministic. */
+  // --- Bit helpers ---
+  function bytesToBits(u8){ var bits=new Uint8Array(u8.length*8); for(var i=0;i<u8.length;i++){ for(var b=0;b<8;b++){ bits[i*8+b]=(u8[i]>>(7-b))&1; } } return bits; }
+  function bitsToBytes(bits){ var n=Math.floor(bits.length/8), out=new Uint8Array(n); for(var i=0;i<n;i++){ var v=0; for(var b=0;b<8;b++){ v=(v<<1)|(bits[i*8+b]&1); } out[i]=v; } return out; }
+
+  // --- FEC_MODE 1: repetition x3 with per-bit majority vote (survives random bit flips) ---
+  function fecRepEncode(u8){ var out=new Uint8Array(u8.length*3); for(var i=0;i<u8.length;i++){ out[i*3]=u8[i]; out[i*3+1]=u8[i]; out[i*3+2]=u8[i]; } return out; }
+  function fecRepDecode(u8){
+    var n=Math.floor(u8.length/3), out=new Uint8Array(n);
+    for(var i=0;i<n;i++){
+      var a=u8[i*3],b=u8[i*3+1],c=u8[i*3+2],v=0;
+      for(var bit=0;bit<8;bit++){ var m=1<<bit; var s=((a&m)?1:0)+((b&m)?1:0)+((c&m)?1:0); if(s>=2) v|=m; }
+      out[i]=v;
+    }
+    return out;
+  }
+
+  // --- Block interleaver: spread a noise burst across many codewords instead of one ---
+  function interleave(u8,depth){ depth=depth||8; var rows=Math.ceil(u8.length/depth), out=new Uint8Array(rows*depth); for(var i=0;i<u8.length;i++){ var r=Math.floor(i/depth), c=i%depth; out[c*rows+r]=u8[i]; } return {data:out,rows:rows,depth:depth,len:u8.length}; }
+  function deinterleave(u8,rows,depth,len){ var out=new Uint8Array(len); for(var i=0;i<len;i++){ var r=Math.floor(i/depth), c=i%depth; out[i]=u8[c*rows+r]; } return out; }
+
+  // --- FEC_MODE 2: Hamming(7,4). Corrects any single-bit error per 4 data bits. ---
+  // Encoder: 4 data bits d1..d4 -> 7 bits (p1 p2 d1 p3 d2 d3 d4). Deterministic, tiny.
+  function hamming74EncodeNibble(d){
+    var d1=(d>>3)&1, d2=(d>>2)&1, d3=(d>>1)&1, d4=d&1;
+    var p1=d1^d2^d4, p2=d1^d3^d4, p3=d2^d3^d4;
+    return [p1,p2,d1,p3,d2,d3,d4];
+  }
+  function hamming74DecodeBits(b){
+    // b: 7 bits. Compute syndrome, flip the indicated bit, return 4 data bits.
+    var s1=b[0]^b[2]^b[4]^b[6];
+    var s2=b[1]^b[2]^b[5]^b[6];
+    var s3=b[3]^b[4]^b[5]^b[6];
+    var syn=(s3<<2)|(s2<<1)|s1; // position (1..7) of the error, 0 = none
+    var c=b.slice(0);
+    if(syn>=1 && syn<=7){ c[syn-1]^=1; }
+    return ((c[2]<<3)|(c[4]<<2)|(c[5]<<1)|c[6])&0xF;
+  }
+  function fecHammingEncode(u8){
+    // Each byte -> two nibbles -> two 7-bit codewords = 14 bits/byte. Then interleave.
+    var bits=[];
+    for(var i=0;i<u8.length;i++){
+      var hi=(u8[i]>>4)&0xF, lo=u8[i]&0xF;
+      hamming74EncodeNibble(hi).forEach(function(x){bits.push(x);});
+      hamming74EncodeNibble(lo).forEach(function(x){bits.push(x);});
+    }
+    // pad bits to byte boundary, pack, then byte-interleave for burst resistance
+    while(bits.length%8) bits.push(0);
+    var packed=bitsToBytes(new Uint8Array(bits));
+    var il=interleave(packed,8);
+    // header: original length (2) + interleave rows (2) so decoder can invert
+    var head=new Uint8Array(4);
+    head[0]=(u8.length>>8)&0xFF; head[1]=u8.length&0xFF;
+    head[2]=(il.rows>>8)&0xFF;   head[3]=il.rows&0xFF;
+    var out=new Uint8Array(head.length+il.data.length);
+    out.set(head,0); out.set(il.data,head.length);
+    return out;
+  }
+  function fecHammingDecode(u8){
+    var origLen=(u8[0]<<8)|u8[1], rows=(u8[2]<<8)|u8[3];
+    var packed=u8.slice(4);
+    var di=deinterleave(packed,rows,8,packed.length);
+    var bits=bytesToBits(di);
+    var nibbles=[], i=0;
+    while(i+7<=bits.length && nibbles.length<origLen*2){
+      nibbles.push(hamming74DecodeBits(bits.slice(i,i+7))); i+=7;
+    }
+    var out=new Uint8Array(origLen);
+    for(var k=0;k<origLen;k++){ out[k]=((nibbles[k*2]||0)<<4)|(nibbles[k*2+1]||0); }
+    return out;
+  }
+
+  // --- Unified FEC apply/remove by mode ---
+  function fecEncode(u8,mode){
+    if(mode===1) return fecRepEncode(u8);
+    if(mode===2) return fecHammingEncode(u8);
+    // mode 3 (RS) is reserved/not implemented; fall back to Hamming so nothing breaks.
+    if(mode===3) return fecHammingEncode(u8);
+    return u8; // mode 0
+  }
+  function fecDecode(u8,mode){
+    if(mode===1) return fecRepDecode(u8);
+    if(mode===2) return fecHammingDecode(u8);
+    if(mode===3) return fecHammingDecode(u8);
+    return u8;
+  }
+
+  /* MODULE: js.aura (Adaptive Ultrasound Reliability Agent) — transparent vanilla-JS
+     decision engine (Brain-AI Bayesian Q-Learning + Risk Assessment patterns). Estimates
+     ambient noise, starts light, escalates FEC only on observed failure, learns online
+     which mode works here. Honest limit: a heuristic aid, not a guarantee. No net. */
+  var AURA=(function(){
+    // Beta-distribution success counts per FEC mode (Bayesian-style online estimate).
+    // Each mode tracks alpha (successes+1) and beta (failures+1). Higher mean = better here.
+    var stats={0:{a:1,b:1},1:{a:1,b:1},2:{a:1,b:1}};
+    var lastNoise=0;      // 0..1 estimate from mic probe (0 = quiet)
+    var decisionLog=[];   // transparent record of every choice/outcome
+
+    function mean(m){ var s=stats[m]; return s.a/(s.a+s.b); }
+    // Risk grade from noise estimate (Cortex-E style thresholds).
+    function grade(noise){ if(noise<0.20) return "ROUTINE"; if(noise<0.55) return "ELEVATED"; return "HIGH"; }
+    // Recommend a starting FEC mode from the current noise grade.
+    function modeForGrade(g){ return g==="ROUTINE"?0 : (g==="ELEVATED"?2 : 2); }
+    // Repetition count grows with risk (ARQ-free robustness for one-way SOS).
+    function repeatForGrade(g){ return g==="ROUTINE"?1 : (g==="ELEVATED"?2 : 3); }
+
+    // Optional quick ambient-noise probe using the microphone (≈400ms). Returns 0..1.
+    // Requires user permission; if denied or unavailable, returns null and we fall back.
+    function probeNoise(cb){
+      if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){ cb(null); return; }
+      navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+        try{
+          var ctx=new (window.AudioContext||window.webkitAudioContext)();
+          var src=ctx.createMediaStreamSource(stream), an=ctx.createAnalyser();
+          an.fftSize=512; src.connect(an);
+          var buf=new Uint8Array(an.frequencyBinCount), peak=0, frames=0;
+          (function loop(){
+            an.getByteFrequencyData(buf);
+            // Focus on the high band near the FSK tones (~17-18kHz) for relevant noise.
+            var hiStart=Math.floor(buf.length*0.7), sum=0, cnt=0;
+            for(var i=hiStart;i<buf.length;i++){ sum+=buf[i]; cnt++; }
+            var avg=cnt?sum/cnt/255:0; if(avg>peak) peak=avg; frames++;
+            if(frames<24){ requestAnimationFrame(loop); }
+            else{ try{ stream.getTracks().forEach(function(tk){tk.stop();}); ctx.close(); }catch(e){} lastNoise=peak; cb(peak); }
+          })();
+        }catch(e){ try{ stream.getTracks().forEach(function(tk){tk.stop();}); }catch(_){} cb(null); }
+      }).catch(function(){ cb(null); });
+    }
+
+    // Choose a plan. If we have a fresh noise estimate, use the grade; otherwise pick
+    // the mode with the best observed success mean (online learning), defaulting light.
+    function decide(){
+      var g=grade(lastNoise);
+      var startMode=modeForGrade(g);
+      // If learning says another mode clearly does better here, prefer it.
+      var best=startMode, bestMean=mean(startMode);
+      [0,1,2].forEach(function(m){ if(mean(m)>bestMean+0.05){ best=m; bestMean=mean(m); } });
+      var plan={mode:best, repeat:repeatForGrade(g), grade:g, noise:Number(lastNoise.toFixed(2))};
+      return plan;
+    }
+    // Escalate after a reported failure: bump to stronger FEC and more repeats.
+    function escalate(plan){
+      var m=plan.mode<2?plan.mode+1:2;
+      var r=Math.min(3,(plan.repeat||1)+1);
+      return {mode:m, repeat:r, grade:plan.grade, noise:plan.noise, escalated:true};
+    }
+    function record(mode,success){ var s=stats[mode]||(stats[mode]={a:1,b:1}); if(success) s.a++; else s.b++; }
+    function log(entry){ decisionLog.unshift(Object.assign({t:Date.now()},entry)); if(decisionLog.length>50) decisionLog.pop(); }
+    function getLog(){ return decisionLog.slice(0); }
+    function summary(){ return {q0:mean(0).toFixed(2),q1:mean(1).toFixed(2),q2:mean(2).toFixed(2),noise:lastNoise.toFixed(2)}; }
+
+    return {probeNoise:probeNoise, decide:decide, escalate:escalate, record:record, log:log, getLog:getLog, summary:summary, grade:grade};
+  })();
+
   function v56CodeLabel(e){return lang==="ko"&&e.ko?e.ko:e.key;}
   function v56FindCode(text){var up=String(text||"").trim().toUpperCase();for(var i=0;i<V56_CODEBOOK.length;i++){var e=V56_CODEBOOK[i];if(up===e.key||up===String(e.ko||"").toUpperCase())return e;}return null;}
   function v56CompressFreeText(text){var bytes=[],s=String(text||"").toUpperCase();for(var i=0;i<s.length;){var matched=false;for(var d=0;d<V56_DICT.length;d++){var w=V56_DICT[d];if(s.slice(i,i+w.length)===w){bytes.push(0x80+d);i+=w.length;matched=true;break;}}if(matched)continue;var ch=s.charCodeAt(i++);if(ch<128)bytes.push(ch);else{var enc=toBytes(s.charAt(i-1));for(var j=0;j<enc.length;j++)bytes.push(enc[j]);}}return new Uint8Array(bytes);}
   function v56DecompressFreeText(bytes){var out="";for(var i=0;i<bytes.length;i++){var b=bytes[i];if(b>=0x80&&b<0x80+V56_DICT.length)out+=V56_DICT[b-0x80];else out+=String.fromCharCode(b);}return out;}
   function v56RadioPayload(text){var code=v56FindCode(text);if(code)return{mode:1,payload:new Uint8Array([code.c]),decoded:code.key,code:code.c};var compressed=v56CompressFreeText(text);return{mode:2,payload:compressed,decoded:String(text||"").toUpperCase(),code:null};}
   function v56RadioPacket(text){var p=v56RadioPayload(text),seq=vgRand32()&0xffff,head=[0x56,0x47,0x56,0x01,(seq>>8)&255,seq&255,1,p.mode,(p.payload.length>>8)&255,p.payload.length&255];var body=new Uint8Array(head.length+p.payload.length);body.set(head,0);body.set(p.payload,head.length);var c=crc16(body);var out=new Uint8Array(body.length+2);out.set(body,0);out[body.length]=(c>>8)&255;out[body.length+1]=c&255;return{bytes:out,decoded:p.decoded,mode:p.mode,seq:seq,crc:c};}
+
+  /* V5.8: FEC-wrapped radio packet. byte[3] (previously a constant version) now carries
+     the FEC_MODE so a receiver knows how to decode. The inner payload is FEC-encoded;
+     the CRC is computed over the FEC-encoded body so corruption is detected before decode.
+     Backward compatible: FEC_MODE=0 reproduces the original V5.7 framing. */
+  function v56RadioPacketFEC(text, fecMode){
+    fecMode = fecMode||0;
+    var p=v56RadioPayload(text);
+    var coded = fecEncode(p.payload, fecMode);
+    var seq=vgRand32()&0xffff;
+    var head=[0x56,0x47,0x56, fecMode, (seq>>8)&255,seq&255, 1, p.mode, (coded.length>>8)&255, coded.length&255];
+    var body=new Uint8Array(head.length+coded.length); body.set(head,0); body.set(coded,head.length);
+    var c=crc16(body);
+    var out=new Uint8Array(body.length+2); out.set(body,0); out[body.length]=(c>>8)&255; out[body.length+1]=c&255;
+    return {bytes:out, decoded:p.decoded, mode:p.mode, fecMode:fecMode, seq:seq, crc:c};
+  }
+  /* FEC-aware decoder. Reads FEC_MODE from byte[3], verifies CRC over the coded body,
+     removes FEC, then interprets payload exactly like the original decoder. */
+  function v56DecodeRadioPacketFEC(bytes){
+    if(bytes[0]!==0x56||bytes[1]!==0x47||bytes[2]!==0x56) throw new Error("bad radio magic");
+    var stored=(bytes[bytes.length-2]<<8)|bytes[bytes.length-1];
+    var calc=crc16(bytes.slice(0,bytes.length-2));
+    var crcOk=(stored===calc);
+    var fecMode=bytes[3], payMode=bytes[7], len=(bytes[8]<<8)|bytes[9];
+    var coded=bytes.slice(10,10+len);
+    var payload;
+    try{ payload=fecDecode(coded, fecMode); }catch(e){ payload=coded; }
+    var text="";
+    if(payMode===1){ var code=payload[0], found=V56_CODEBOOK.filter(function(e){return e.c===code;})[0]; text=found?found.key:("CODE 0x"+(code||0).toString(16)); }
+    else { text=v56DecompressFreeText(payload); }
+    return {mode:payMode, fecMode:fecMode, text:text, crc:stored, crcOk:crcOk, seq:(bytes[4]<<8)|bytes[5]};
+  }
   function v56DecodeRadioPacket(bytes){if(bytes[0]!==0x56||bytes[1]!==0x47||bytes[2]!==0x56)throw new Error("bad radio magic");var stored=(bytes[bytes.length-2]<<8)|bytes[bytes.length-1],calc=crc16(bytes.slice(0,bytes.length-2));if(stored!==calc)throw new Error("CRC mismatch");var mode=bytes[7],len=(bytes[8]<<8)|bytes[9],payload=bytes.slice(10,10+len),text="";if(mode===1){var code=payload[0],found=V56_CODEBOOK.filter(function(e){return e.c===code;})[0];text=found?found.key:"CODE 0x"+code.toString(16);}else{text=v56DecompressFreeText(payload);}return{mode:mode,text:text,crc:stored,seq:(bytes[4]<<8)|bytes[5]};}
   function v56PlayBytesViaUltrasound(bytes,repeat,onStatus){repeat=Math.max(1,Math.min(5,Number(repeat)||1));try{sendAudioCtx=sendAudioCtx||new(window.AudioContext||window.webkitAudioContext)();}catch(e){if(onStatus)onStatus(t("usNoAudio"));return;}if(sendAudioCtx.state==="suspended")sendAudioCtx.resume();sendStop=false;if(onStatus)onStatus(t("usSending"));var osc=sendAudioCtx.createOscillator(),gain=sendAudioCtx.createGain();osc.type="sine";gain.gain.value=0.5;osc.connect(gain);gain.connect(sendAudioCtx.destination);sendOsc=osc;var bitDur=1/BAUD,tNow=sendAudioCtx.currentTime;function pushByte(b){for(var i=7;i>=0;i--){var bit=(b>>i)&1;osc.frequency.setValueAtTime(bit?MARK_FREQ:SPACE_FREQ,tNow);tNow+=bitDur;}}for(var r=0;r<repeat;r++){osc.frequency.setValueAtTime(MARK_FREQ,tNow);tNow+=0.05;pushByte(0xAA);pushByte(0xAA);pushByte(0x7E);for(var j=0;j<bytes.length;j++)pushByte(bytes[j]);pushByte(0x7E);tNow+=0.22;}osc.start();osc.stop(tNow+0.1);osc.onended=function(){try{osc.disconnect();gain.disconnect();}catch(e){}sendOsc=null;if(onStatus)onStatus(t("usDone"));};}
   var v56RadioLog=[],v56LastRadio=null;
@@ -3866,7 +4175,37 @@
   function v56UpdateRadioEstimate(){var txt=$("mltRadioText")?$("mltRadioText").value:"",pkt=v56RadioPacket(txt||" "),rep=$("mltRadioRepeat")?Number($("mltRadioRepeat").value||1):1,raw=(pkt.bytes.length+4)*8/BAUD*rep,el=$("mltRadioEstimate");if(el)el.innerHTML="<b>"+(lang==="ko"?"압축 추정":"Compressed estimate")+"</b><br>"+pkt.bytes.length+" bytes × "+rep+" · "+(lang==="ko"?"예상":"about")+" "+Math.ceil(raw+2.5)+"s";}
   function v56RenderCodebook(){var box=$("mltRadioCodebook");if(!box)return;box.innerHTML="";V56_CODEBOOK.forEach(function(e){var b=document.createElement("button");b.type="button";b.className="mlt-codebook-btn";b.innerHTML="<b>0x"+e.c.toString(16).toUpperCase()+"</b> "+escapeHtml(v56CodeLabel(e))+"<br><small>"+escapeHtml(e.key)+"</small>";b.addEventListener("click",function(){if($("mltRadioText")){$("mltRadioText").value=e.key;v56UpdateRadioEstimate();}});box.appendChild(b);});}
   function v56OpenRadio(){v56RenderCodebook();v56UpdateRadioEstimate();v56RenderRadioLog();openModal("mltRadioModal");}
-  if($("mltRadioLogBtn"))$("mltRadioLogBtn").addEventListener("click",v56OpenRadio);if($("mltRadioClose"))$("mltRadioClose").addEventListener("click",function(){closeModal("mltRadioModal");});if($("mltRadioText"))$("mltRadioText").addEventListener("input",v56UpdateRadioEstimate);if($("mltRadioRepeat"))$("mltRadioRepeat").addEventListener("change",v56UpdateRadioEstimate);if($("mltRadioUseDoc"))$("mltRadioUseDoc").addEventListener("click",function(){if($("mltRadioText")){$("mltRadioText").value=curText().slice(0,220);v56UpdateRadioEstimate();}});if($("mltRadioCode"))$("mltRadioCode").addEventListener("click",function(){var pkt=v56RadioPacket($("mltRadioText").value),code="VG56R."+v56BytesToB64(pkt.bytes);$("mltRadioCodeOut").value=code;v56LastRadio=pkt;v56RadioAdd("TX-CODE",pkt.decoded,pkt,true);});if($("mltRadioSend"))$("mltRadioSend").addEventListener("click",function(){var pkt=v56RadioPacket($("mltRadioText").value);v56LastRadio=pkt;v56RadioAdd("TX",pkt.decoded,pkt,true);v56PlayBytesViaUltrasound(pkt.bytes,$("mltRadioRepeat").value,function(msg){$("mltRadioEstimate").innerHTML="<b>"+escapeHtml(msg)+"</b>";});});if($("mltRadioSayAgain"))$("mltRadioSayAgain").addEventListener("click",function(){if(!v56LastRadio){showToast("tNoCode");return;}v56RadioAdd("TX-AGAIN",v56LastRadio.decoded,v56LastRadio,true);v56PlayBytesViaUltrasound(v56LastRadio.bytes,$("mltRadioRepeat")?$("mltRadioRepeat").value:1,function(msg){if($("mltRadioEstimate"))$("mltRadioEstimate").innerHTML="<b>"+escapeHtml(msg)+"</b>";});});if($("mltRadioDecodeBtn"))$("mltRadioDecodeBtn").addEventListener("click",function(){try{var code=$("mltRadioDecodeIn").value.trim(),bytes=code.indexOf("VG56R.")===0?v56B64ToBytes(code.slice(6)):v56B64ToBytes(code),dec=v56DecodeRadioPacket(bytes);v56RadioAdd("RX",dec.text,{bytes:bytes,crc:dec.crc},true);}catch(e){v56RadioAdd("RX",String(e.message||e),null,false);}});
+  if($("mltRadioLogBtn"))$("mltRadioLogBtn").addEventListener("click",v56OpenRadio);
+  // V5.8: AURA helpers and UI wiring.
+  var v56LastPlan=null;
+  function v58FecName(m){ return m===0?"none":(m===1?"rep×3":(m===2?"Hamming":(m===3?"RS(plan)":("m"+m)))); }
+  function v58RenderAura(){
+    var box=$("mltAuraLog"); if(box){ box.innerHTML=""; AURA.getLog().slice(0,12).forEach(function(e){ var d=document.createElement("div"); d.className="mlt-radio-log-row"; var when=new Date(e.t).toLocaleTimeString(); d.textContent=when+" · "+(e.phase||"")+" · FEC "+v58FecName(e.fecMode||0)+(e.repeat?(" ×"+e.repeat):"")+(e.grade?(" · "+e.grade):"")+(e.escalated?" ↑":"")+(e.crcOk===false?" ✗":(e.crcOk===true?" ✓":"")); box.appendChild(d); }); }
+    var st=$("mltAuraStatus"); if(st){ var s=AURA.summary(); st.innerHTML="<b>"+t("auraQuality")+"</b> none "+s.q0+" · rep "+s.q1+" · Hamming "+s.q2+" &nbsp;|&nbsp; "+t("auraNoise")+" "+s.noise; }
+  }
+  if($("mltAuraProbe"))$("mltAuraProbe").addEventListener("click",function(){
+    if($("mltAuraStatus"))$("mltAuraStatus").textContent=t("auraProbing");
+    AURA.probeNoise(function(noise){
+      if(noise===null){ if($("mltAuraStatus"))$("mltAuraStatus").textContent=t("auraProbeFail"); return; }
+      var g=AURA.grade(noise);
+      AURA.log({phase:"PROBE",fecMode:AURA.decide().mode,grade:g,noise:Number(noise.toFixed(2))});
+      v58RenderAura();
+      if($("mltAuraStatus"))$("mltAuraStatus").innerHTML="<b>"+t("auraGrade")+" "+g+"</b> · "+t("auraNoise")+" "+noise.toFixed(2)+" → FEC "+v58FecName(AURA.decide().mode);
+    });
+  });
+  if($("mltRadioClose"))$("mltRadioClose").addEventListener("click",function(){closeModal("mltRadioModal");});if($("mltRadioText"))$("mltRadioText").addEventListener("input",v56UpdateRadioEstimate);if($("mltRadioRepeat"))$("mltRadioRepeat").addEventListener("change",v56UpdateRadioEstimate);if($("mltRadioUseDoc"))$("mltRadioUseDoc").addEventListener("click",function(){if($("mltRadioText")){$("mltRadioText").value=curText().slice(0,220);v56UpdateRadioEstimate();}});if($("mltRadioCode"))$("mltRadioCode").addEventListener("click",function(){var sel=$("mltAuraMode")?$("mltAuraMode").value:"auto";var fm=sel==="auto"?AURA.decide().mode:(Number(sel)||0);var pkt=v56RadioPacketFEC($("mltRadioText").value,fm),code="VG56R."+v56BytesToB64(pkt.bytes);$("mltRadioCodeOut").value=code;v56LastRadio=pkt;v56LastPlan={mode:fm,repeat:1,grade:"MANUAL",noise:0};v56RadioAdd("TX-CODE",pkt.decoded+"  [FEC "+v58FecName(fm)+"]",pkt,true);v58RenderAura();});if($("mltRadioSend"))$("mltRadioSend").addEventListener("click",function(){
+    // V5.8: pick FEC mode via AURA (auto) or the explicit selector, then send.
+    var sel=$("mltAuraMode")?$("mltAuraMode").value:"auto", plan;
+    if(sel==="auto"){ plan=AURA.decide(); }
+    else { plan={mode:Number(sel)||0, repeat:Number($("mltRadioRepeat")?$("mltRadioRepeat").value:1)||1, grade:"MANUAL", noise:0}; }
+    if(plan.mode===3){ /* RS reserved -> falls back to Hamming inside fecEncode; note it */ }
+    var pkt=v56RadioPacketFEC($("mltRadioText").value, plan.mode);
+    v56LastRadio=pkt; v56LastPlan=plan;
+    v56RadioAdd("TX",pkt.decoded+"  [FEC "+v58FecName(plan.mode)+"]",pkt,true);
+    AURA.log({phase:"TX",fecMode:plan.mode,repeat:plan.repeat,grade:plan.grade,noise:plan.noise});
+    v58RenderAura();
+    v56PlayBytesViaUltrasound(pkt.bytes, plan.repeat, function(msg){ if($("mltRadioEstimate"))$("mltRadioEstimate").innerHTML="<b>"+escapeHtml(msg)+"</b>"; });
+  });if($("mltRadioSayAgain"))$("mltRadioSayAgain").addEventListener("click",function(){if(!v56LastRadio){showToast("tNoCode");return;}var prevMode=(v56LastPlan&&typeof v56LastPlan.mode==="number")?v56LastPlan.mode:0;AURA.record(prevMode,false);var plan=AURA.escalate(v56LastPlan||{mode:prevMode,repeat:1,grade:"HIGH",noise:0});var src=(v56LastRadio&&v56LastRadio.decoded)||$("mltRadioText").value;var pkt=v56RadioPacketFEC(src,plan.mode);v56LastRadio=pkt;v56LastPlan=plan;v56RadioAdd("TX-AGAIN",pkt.decoded+"  [FEC "+v58FecName(plan.mode)+"↑]",pkt,true);AURA.log({phase:"TX-AGAIN",fecMode:plan.mode,repeat:plan.repeat,escalated:true});v58RenderAura();v56PlayBytesViaUltrasound(pkt.bytes,plan.repeat,function(msg){if($("mltRadioEstimate"))$("mltRadioEstimate").innerHTML="<b>"+escapeHtml(msg)+"</b>";});});if($("mltRadioDecodeBtn"))$("mltRadioDecodeBtn").addEventListener("click",function(){try{var code=$("mltRadioDecodeIn").value.trim(),bytes=code.indexOf("VG56R.")===0?v56B64ToBytes(code.slice(6)):v56B64ToBytes(code),dec=v56DecodeRadioPacketFEC(bytes);v56RadioAdd("RX",dec.text,{bytes:bytes,crc:dec.crc},dec.crcOk!==false);if(typeof AURA!=="undefined"){AURA.record(dec.fecMode||0,dec.crcOk!==false);AURA.log({phase:"RX",fecMode:dec.fecMode,crcOk:dec.crcOk});}}catch(e){v56RadioAdd("RX",String(e.message||e),null,false);}});
   var v56MiniSnaps=[];function v56SourceText(){return codeView?codeRaw:sheetA.innerText;}function v56RenderSnapshots(){var box=$("mltMiniGitSnaps");if(!box)return;box.innerHTML="";if(!v56MiniSnaps.length){box.textContent=lang==="ko"?"아직 스냅샷이 없습니다.":"No snapshots yet.";return;}v56MiniSnaps.slice().reverse().forEach(function(snap,idx){var div=document.createElement("div");div.className="mlt-mini-snap";div.innerHTML="<b>#"+(v56MiniSnaps.length-idx)+" · "+escapeHtml(snap.ts)+"</b><br>"+snap.lines+" lines · "+snap.bytes+" bytes";box.appendChild(div);});}
   function v56OpenMiniGit(){v56RenderSnapshots();if($("mltMiniGitSearchOut"))$("mltMiniGitSearchOut").textContent="";openModal("mltMiniGitModal");}if($("mltMiniGitBtn"))$("mltMiniGitBtn").addEventListener("click",v56OpenMiniGit);if($("mltMiniGitClose"))$("mltMiniGitClose").addEventListener("click",function(){closeModal("mltMiniGitModal");});if($("mltMiniGitSnap"))$("mltMiniGitSnap").addEventListener("click",function(){var txt=v56SourceText();v56MiniSnaps.push({ts:new Date().toLocaleString(),text:txt,lines:txt.split("\n").length,bytes:toBytes(txt).length});v56RenderSnapshots();});if($("mltMiniGitClear"))$("mltMiniGitClear").addEventListener("click",function(){v56MiniSnaps=[];v56RenderSnapshots();if($("mltMiniGitDiffOut"))$("mltMiniGitDiffOut").textContent="";});if($("mltMiniGitSearchBtn"))$("mltMiniGitSearchBtn").addEventListener("click",function(){var q=$("mltMiniGitSearch").value,lines=v56SourceText().split("\n"),out=[];if(q){for(var i=0;i<lines.length;i++){if(lines[i].toLowerCase().indexOf(q.toLowerCase())>=0)out.push((i+1)+": "+lines[i].slice(0,180));}}$("mltMiniGitSearchOut").textContent=out.length?out.join("\n"):(lang==="ko"?"검색 결과가 없습니다.":"No matches.");});
   /* Compute a simple line-based diff for memory-only miniGit snapshots.
@@ -3875,7 +4214,7 @@
   var __v56OldDecode=vgDecodePackage;vgEncodePackage=function(pkg){return "VG56."+vgBase64UrlEncode(JSON.stringify(pkg));};vgDecodePackage=function(code){code=String(code||"").trim();if(code.indexOf("VG56.")===0)return JSON.parse(vgBase64UrlDecode(code.slice(5)));if(code.indexOf("VG56R.")===0){var dec=v56DecodeRadioPacket(v56B64ToBytes(code.slice(6)));return vgMakePackage("radio",dec.text,{radio:true,seq:dec.seq});}return __v56OldDecode(code);};
   var v56Drop=document.createElement("div");v56Drop.id="mltDropHint";v56Drop.className="mlt-drop-overlay";v56Drop.textContent=t("openHint");document.body.appendChild(v56Drop);sheets.forEach(function(s){s.addEventListener("dragenter",function(){v56Drop.textContent=t("openHint");v56Drop.classList.add("mlt-show");});s.addEventListener("drop",function(){v56Drop.classList.remove("mlt-show");});s.addEventListener("dragleave",function(){setTimeout(function(){v56Drop.classList.remove("mlt-show");},700);});});
 
-  /* ============================================================================
+  /* ====
    MODULE: js.v57.cover-safety-and-help
    Responsibility:
    - Implements the Post-it cover, emergency self-wipe, Bluetooth safety gate,
@@ -3886,7 +4225,7 @@
    - Keep `panicWipe()` isolated and documented; it should not be mixed with normal save/export.
    Improvement idea:
    - Move cover-screen state into a dedicated ephemeral session object.
-   ========================================================================== */
+   ==== */
   (function(){
     // --- 50 demo recipes with rough per-serving kcal (humanitarian demo data, not medical advice) ---
     var RECIPES=[
@@ -3915,26 +4254,32 @@
        Scope: destroys the user's own in-memory editor/session data on this device only.
        Non-goals: it does not affect remote systems, saved downloads, OS backups, or browser history.
        Improvement idea: expose a dry-run documentation mode for demos. */
+    // MODULE: js.memory-hygiene — best-effort overwrite before release.
+    // HONEST LIMIT: JS cannot guarantee physical erasure (GC timing, OS swap, SSD
+    // wear-leveling are outside a web page's control). Mitigation, not a guarantee.
+    function scrubBuffer(u8){ try{ if(u8&&u8.fill){ if(window.crypto&&crypto.getRandomValues) crypto.getRandomValues(u8); u8.fill(0); } }catch(e){} }
     function panicWipe(){
       try{
+        try{ if(typeof v56LastRadio!=="undefined" && v56LastRadio && v56LastRadio.bytes) scrubBuffer(v56LastRadio.bytes); }catch(e){}
         // 1) Clear editor + post-it + buffers held in memory.
         try{ if(sheetA) sheetA.innerHTML=""; if(sheetB) sheetB.innerHTML=""; }catch(e){}
         try{ codeRaw=""; }catch(e){}
         try{ if(window.vgState){ vgState.inbox=[]; vgState.outbox=[]; } }catch(e){}
         try{ if(typeof v56MiniSnaps!=="undefined") v56MiniSnaps.length=0; }catch(e){}
         try{ var note=document.getElementById("mltPostitNote"); if(note) note.value=""; }catch(e){}
+        try{ if(typeof v56LastRadio!=="undefined") v56LastRadio=null; }catch(e){}
         // 2) Stop any audio/mic monitors if present.
         try{ if(window.vgRxMic&&vgRxMic.ctx&&vgRxMic.ctx.close) vgRxMic.ctx.close(); }catch(e){}
         // 3) Overwrite total and recipe list references.
         total=0; RECIPES.length=0; unlockFood=null;
-        // 4) Corrupt the live DOM: replace the whole document with random noise so nothing readable is left.
+        // 4) Corrupt the live DOM so nothing readable is left.
         var junk="";
         var chars="!@#$%^&*()_+=-{}[]<>?/\\|~`0123456789ABCDEFabcdef";
         for(var i=0;i<4000;i++){ junk+=chars.charAt(Math.floor(Math.random()*chars.length)); if(i%80===0) junk+="\n"; }
         document.documentElement.innerHTML="<pre style='font:12px monospace;color:#777;padding:14px;white-space:pre-wrap;'>"+junk+"</pre>";
-        // 5) Best effort: break the global closure state by throwing after corruption.
       }catch(e){}
-      // Nothing readable remains; reloading the page reloads only the static file, not the wiped session data.
+      // NOTE (honest limit): the OS may still hold copies in swap, hibernation, or SSD
+      // remapped blocks beyond our reach. This wipes the session heap/DOM only.
     }
 
     // --- Render recipe list (each row: name + kcal button [add to total] + wipe button [emergency]) ---
@@ -4091,7 +4436,7 @@
     window.__v57ReRender=function(){ if(wrap.classList.contains("mlt-postit-mode")) renderRecipes($("mltPostitSearch")?$("mltPostitSearch").value:""); };
   })();
 
-  /* ============================================================================
+  /* ====
    MODULE: js.boot
    Responsibility:
    - Runs final enhancement, layout defaults, language application, and startup wiring.
@@ -4101,7 +4446,7 @@
    - In a split build, this becomes the single bootstrap module.
    Improvement idea:
    - Add a boot checklist that can fail loudly when required components are missing.
-   ========================================================================== */
+   ==== */
   enhanceModalConfirmButtons();
   applyPageW(); applyPageFs(); langSel.value="en"; applyLang();
 })();
