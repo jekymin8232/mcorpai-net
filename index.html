@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<title>Vitalguard-AI V6.0 — miniGit, no tracking</title>
+<title>Vitalguard-AI V6.1 — miniGit, no tracking</title>
 </head>
 <body>
 <!--
-  Vitalguard-AI V6.0 — miniGit, no tracking
+  Vitalguard-AI V6.1 — miniGit, no tracking
   Vanilla HTML + CSS + JS / zero external libraries / fully offline.
 
   MIT License
@@ -45,6 +45,17 @@
      (a self-wipe of the user's own data on their own device; no network).
    - Comms safety warning (Bluetooth vs ultrasound); honest incognito guidance.
 
+
+  V6.1 changes (a "fun" build):
+   - Drag an audio file (mp3/ogg/wav/m4a/aac) onto the page to attach background music.
+     On Save as HTML, a small <audio controls> player is embedded as a base64 data URL so
+     the saved page can play the sound fully offline. A clear warning is shown first: this
+     is a playful extra, NOT a safety feature, cannot be guaranteed 100% safe, makes the
+     file much larger, and the audio is readable inside the page. No network is used.
+   - Save dialog extended: in addition to HTML/TXT/MD, the current text can now be saved
+     as JS, CSS, JSON, XML, CSV, or SVG (plain-text content with that extension).
+   - Save dialog wording clarified: "HTML keeps formatting and images; TXT/MD are plain
+     text" (all seven languages).
 
   V6.0 changes (MVP / research build):
    - Labelled as "V6.0 — MVP / Research build (multilingual)" in the UI.
@@ -344,6 +355,10 @@
 .mlt-vg-sos.mlt-holding{outline:4px solid rgba(192,57,43,.35);}
 .mlt-vg-status{font-size:11px;color:var(--mlt-muted);padding:6px 14px;background:#f6f1e6;border-bottom:1px solid var(--mlt-line);}
 .mlt-vg-status b{color:var(--mlt-ink)}
+.mlt-savegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:6px 0;}
+.mlt-audio-state{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--mlt-muted);
+  padding:6px 14px;background:#f3efe2;border-bottom:1px solid var(--mlt-line);}
+.mlt-audio-state b{color:var(--mlt-ink);}
 .mlt-vg-card{border:1px solid var(--mlt-line);background:#fbfaf6;border-radius:12px;padding:12px;margin:10px 0;}
 .mlt-vg-card h4{margin:0 0 5px;font-size:13px;color:var(--mlt-ink);}
 .mlt-vg-card p{margin:0 0 8px;font-size:11.5px;color:var(--mlt-muted);line-height:1.55;}
@@ -649,10 +664,10 @@
 
   <div class="mlt-head">
     <div class="mlt-title">
-      <span data-i18n="title">Vitalguard-AI V6.0 — miniGit, no tracking</span>
-      <span style="font-weight:400;color:var(--mlt-muted);font-size:11px;">V6.0 · MVP</span>
+      <span data-i18n="title">Vitalguard-AI V6.1 — miniGit, no tracking</span>
+      <span style="font-weight:400;color:var(--mlt-muted);font-size:11px;">V6.1 · MVP</span>
       <small data-i18n="subtitle">Offline · local-first · code never auto-runs</small>
-      <small data-i18n="researchBadge" style="display:block;color:var(--mlt-accent);font-weight:600;">V6.0 Research build (multilingual)</small>
+      <small data-i18n="researchBadge" style="display:block;color:var(--mlt-accent);font-weight:600;">V6.1 Research build (multilingual)</small>
     </div>
     <div class="mlt-headright">
       <select class="mlt-langsel" id="mltLang" title="Language">
@@ -680,7 +695,11 @@
     </div>
   </div>
 
-  <div class="mlt-vg-status" id="mltVgStatus" aria-live="polite"><b>Vitalguard-AI V6.0</b> · Offline local mode · Send/Receive/SOS only after explicit user action.</div>
+  <div class="mlt-vg-status" id="mltVgStatus" aria-live="polite"><b>Vitalguard-AI V6.1</b> · Offline local mode · Send/Receive/SOS only after explicit user action.</div>
+  <div class="mlt-audio-state" id="mltAudioState" style="display:none;">
+    <span>🎵 <span data-i18n="audioAttached">Music attached:</span> <b id="mltAudioName">—</b></span>
+    <button class="mlt-action" id="mltAudioRemove" type="button" data-i18n="audioRemove">Remove</button>
+  </div>
 
   <div class="mlt-mode-guide" id="mltModeGuide" aria-live="polite">
     <div class="mlt-guide-card"><b data-i18n="guideWriteTitle">1. Write or open</b><span class="mlt-guide-desc" data-i18n="guideWriteBody">Start with the paper area, or open a TXT/HTML/MD/source file.</span><br><button class="mlt-action" id="mltGuideOpen" type="button" data-i18n="openHtml">📂 Open</button></div>
@@ -916,12 +935,32 @@
 <!-- MODULE: html.modal.save-format — pairs with `js.export.save-and-sanitize`. -->
 <div class="mlt-modal" id="mltSaveModal"><div class="mlt-card">
   <h3 data-i18n="saveTitle">Save as…</h3>
-  <p data-i18n="saveDesc">HTML keeps formatting &amp; images. TXT/MD are plain text.</p>
-  <div class="mlt-foot2">
+  <p data-i18n="saveDesc">HTML keeps formatting and images; TXT/MD are plain text.</p>
+  <div class="mlt-savegrid">
     <button class="mlt-action mlt-primary" id="mltSaveAsHtml" type="button">HTML (.html)</button>
     <button class="mlt-action" id="mltSaveAsTxt" type="button">Text (.txt)</button>
     <button class="mlt-action" id="mltSaveAsMd" type="button">Markdown (.md)</button>
+    <button class="mlt-action" id="mltSaveAsJs" type="button">JavaScript (.js)</button>
+    <button class="mlt-action" id="mltSaveAsCss" type="button">CSS (.css)</button>
+    <button class="mlt-action" id="mltSaveAsJson" type="button">JSON (.json)</button>
+    <button class="mlt-action" id="mltSaveAsXml" type="button">XML (.xml)</button>
+    <button class="mlt-action" id="mltSaveAsCsv" type="button">CSV (.csv)</button>
+    <button class="mlt-action" id="mltSaveAsSvg" type="button">SVG (.svg)</button>
+  </div>
+  <p class="mlt-postit-sub" data-i18n="saveDescMore" style="margin-top:10px;">JS, CSS, JSON, XML, CSV, and SVG save the current text as a plain-text file with that extension (the content is your document text, not converted).</p>
+  <div class="mlt-foot2">
     <button class="mlt-action" id="mltSaveCancel" type="button" data-i18n="cancel">Cancel</button>
+  </div>
+</div></div>
+
+<!-- V6.1 audio embed: honest warning shown before embedding a dragged audio file -->
+<div class="mlt-modal" id="mltAudioModal"><div class="mlt-card">
+  <h3 data-i18n="audioTitle">🎵 Add background music?</h3>
+  <div class="mlt-postit-sub" id="mltAudioInfo" style="font-weight:600;">—</div>
+  <div class="mlt-disc" data-i18n="audioWarn" style="border-left:4px solid #c9a227;">This is a fun extra, not a safety feature, and it cannot be guaranteed 100% safe. When you save as HTML, the audio is embedded directly inside the file: it makes the file much larger, the sound data is fully readable inside the page, and some browsers block autoplay until the visitor clicks play. Everything stays offline (the audio is stored locally inside the page, with no network), but do not use this for anything sensitive.</div>
+  <div class="mlt-foot2">
+    <button class="mlt-action" id="mltAudioCancel" type="button" data-i18n="cancel">Cancel</button>
+    <button class="mlt-action mlt-primary" id="mltAudioConfirm" type="button" data-i18n="audioConfirm">Add music (I understand)</button>
   </div>
 </div></div>
 
@@ -2524,15 +2563,76 @@
 
   /* ===================== V6.0 i18n: research-build badge (7 languages) ===================== */
   var VG60_I18N={
-    en:{researchBadge:"V6.0 Research build (multilingual)"},
-    ko:{researchBadge:"V6.0 연구 버전 (다국어)"},
-    ar:{researchBadge:"V6.0 نسخة بحثية (متعددة اللغات)"},
-    zh:{researchBadge:"V6.0 研究版本（多语言）"},
-    ja:{researchBadge:"V6.0 研究ビルド（多言語）"},
-    es:{researchBadge:"V6.0 versión de investigación (multilingüe)"},
-    fr:{researchBadge:"V6.0 version de recherche (multilingue)"}
+    en:{researchBadge:"V6.1 Research build (multilingual)"},
+    ko:{researchBadge:"V6.1 연구 버전 (다국어)"},
+    ar:{researchBadge:"V6.1 نسخة بحثية (متعددة اللغات)"},
+    zh:{researchBadge:"V6.1 研究版本（多语言）"},
+    ja:{researchBadge:"V6.1 研究ビルド（多言語）"},
+    es:{researchBadge:"V6.1 versión de investigación (multilingüe)"},
+    fr:{researchBadge:"V6.1 version de recherche (multilingue)"}
   };
   Object.keys(I18N).forEach(function(k){ var loc=VG60_I18N[k]||{}, base=VG60_I18N.en; Object.keys(base).forEach(function(key){ I18N[k][key]=(loc[key]!==undefined?loc[key]:base[key]); }); });
+
+  /* ===================== V6.1 i18n: audio embed + extra save formats (7 languages) ===================== */
+  var VG61_I18N={
+    en:{
+      audioTitle:"🎵 Add background music?",
+      audioWarn:"This is a fun extra, not a safety feature, and it cannot be guaranteed 100% safe. When you save as HTML, the audio is embedded directly inside the file: it makes the file much larger, the sound data is fully readable inside the page, and some browsers block autoplay until the visitor clicks play. Everything stays offline (the audio is stored locally inside the page, with no network), but do not use this for anything sensitive.",
+      audioConfirm:"Add music (I understand)", audioAdded:"Music attached. Save as HTML to keep it.", audioRemoved:"Music removed.", audioFail:"Could not read the audio file.",
+      audioAttached:"Music attached:", audioRemove:"Remove",
+      saveDesc:"HTML keeps formatting and images; TXT/MD are plain text.",
+      saveDescMore:"JS, CSS, JSON, XML, CSV, and SVG save the current text as a plain-text file with that extension (the content is your document text, not converted)."
+    },
+    ko:{
+      audioTitle:"🎵 배경 음악을 넣을까요?",
+      audioWarn:"이것은 재미있는 기능이며 안전 기능이 아닙니다. 100% 안전하다고 보장할 수 없습니다. HTML로 저장하면 오디오가 파일 안에 직접 삽입됩니다: 파일이 훨씬 커지고, 소리 데이터가 페이지 안에서 그대로 읽히며, 일부 브라우저는 방문자가 재생을 누를 때까지 자동 재생을 막습니다. 모든 것은 오프라인으로 유지되지만(오디오는 네트워크 없이 페이지 안에 로컬로 저장됨), 민감한 용도로는 사용하지 마세요.",
+      audioConfirm:"음악 넣기 (이해했습니다)", audioAdded:"음악이 첨부되었습니다. HTML로 저장하면 유지됩니다.", audioRemoved:"음악을 제거했습니다.", audioFail:"오디오 파일을 읽을 수 없습니다.",
+      audioAttached:"첨부된 음악:", audioRemove:"제거",
+      saveDesc:"HTML은 서식·이미지를 유지하고, TXT/MD는 순수 텍스트입니다.",
+      saveDescMore:"JS, CSS, JSON, XML, CSV, SVG는 현재 텍스트를 해당 확장자의 순수 텍스트 파일로 저장합니다(내용은 변환되지 않은 문서 텍스트입니다)."
+    },
+    ar:{
+      audioTitle:"🎵 إضافة موسيقى خلفية؟",
+      audioWarn:"هذه ميزة ممتعة وليست ميزة أمان، ولا يمكن ضمان أنها آمنة 100%. عند الحفظ بصيغة HTML، يُضمَّن الصوت مباشرة داخل الملف: يصبح الملف أكبر بكثير، وبيانات الصوت قابلة للقراءة بالكامل داخل الصفحة، وقد تمنع بعض المتصفحات التشغيل التلقائي حتى ينقر الزائر. يبقى كل شيء دون اتصال (يُخزَّن الصوت محليًا داخل الصفحة بلا شبكة)، لكن لا تستخدمها لأي شيء حساس.",
+      audioConfirm:"إضافة موسيقى (أفهم)", audioAdded:"تم إرفاق الموسيقى. احفظ بصيغة HTML للاحتفاظ بها.", audioRemoved:"تمت إزالة الموسيقى.", audioFail:"تعذّر قراءة ملف الصوت.",
+      audioAttached:"الموسيقى المرفقة:", audioRemove:"إزالة",
+      saveDesc:"يحافظ HTML على التنسيق والصور؛ أما TXT/MD فنص صِرف.",
+      saveDescMore:"تحفظ JS وCSS وJSON وXML وCSV وSVG النص الحالي كملف نصي بهذا الامتداد (المحتوى هو نص مستندك، غير محوَّل)."
+    },
+    zh:{
+      audioTitle:"🎵 添加背景音乐？",
+      audioWarn:"这是一个有趣的附加功能，不是安全功能，无法保证 100% 安全。保存为 HTML 时，音频会直接嵌入文件中：文件会大很多，声音数据在页面内完全可读，部分浏览器会阻止自动播放直到访客点击播放。一切都保持离线（音频本地存储在页面内，无网络），但请勿用于任何敏感内容。",
+      audioConfirm:"添加音乐（我已了解）", audioAdded:"已附加音乐。保存为 HTML 以保留它。", audioRemoved:"已移除音乐。", audioFail:"无法读取音频文件。",
+      audioAttached:"已附加音乐：", audioRemove:"移除",
+      saveDesc:"HTML 保留格式与图片；TXT/MD 为纯文本。",
+      saveDescMore:"JS、CSS、JSON、XML、CSV 和 SVG 将当前文本保存为带该扩展名的纯文本文件（内容为你的文档文本，不做转换）。"
+    },
+    ja:{
+      audioTitle:"🎵 背景音楽を追加しますか？",
+      audioWarn:"これは楽しい追加機能であり、安全機能ではありません。100%安全とは保証できません。HTMLで保存すると、音声はファイル内に直接埋め込まれます：ファイルがかなり大きくなり、音声データはページ内で完全に読み取れ、一部のブラウザは訪問者がクリックするまで自動再生をブロックします。すべてオフラインのままです（音声はネットワークなしでページ内にローカル保存）が、機密性のあるものには使わないでください。",
+      audioConfirm:"音楽を追加（理解しました）", audioAdded:"音楽を添付しました。HTMLで保存すると保持されます。", audioRemoved:"音楽を削除しました。", audioFail:"音声ファイルを読み込めませんでした。",
+      audioAttached:"添付された音楽：", audioRemove:"削除",
+      saveDesc:"HTMLは書式と画像を保持し、TXT/MDは純粋なテキストです。",
+      saveDescMore:"JS、CSS、JSON、XML、CSV、SVGは現在のテキストをその拡張子のプレーンテキストファイルとして保存します（内容は変換されない文書テキストです）。"
+    },
+    es:{
+      audioTitle:"🎵 ¿Añadir música de fondo?",
+      audioWarn:"Esto es un extra divertido, no una función de seguridad, y no se puede garantizar 100% seguro. Al guardar como HTML, el audio se incrusta directamente dentro del archivo: lo hace mucho más grande, los datos de sonido son totalmente legibles dentro de la página y algunos navegadores bloquean la reproducción automática hasta que el visitante haga clic. Todo permanece sin conexión (el audio se guarda localmente dentro de la página, sin red), pero no lo uses para nada sensible.",
+      audioConfirm:"Añadir música (entiendo)", audioAdded:"Música añadida. Guarda como HTML para conservarla.", audioRemoved:"Música eliminada.", audioFail:"No se pudo leer el archivo de audio.",
+      audioAttached:"Música añadida:", audioRemove:"Quitar",
+      saveDesc:"HTML conserva formato e imágenes; TXT/MD son texto plano.",
+      saveDescMore:"JS, CSS, JSON, XML, CSV y SVG guardan el texto actual como archivo de texto plano con esa extensión (el contenido es el texto de tu documento, sin convertir)."
+    },
+    fr:{
+      audioTitle:"🎵 Ajouter une musique de fond ?",
+      audioWarn:"C'est un extra amusant, pas une fonction de sécurité, et on ne peut pas garantir une sûreté à 100 %. Lors de l'enregistrement en HTML, l'audio est intégré directement dans le fichier : il devient bien plus volumineux, les données sonores sont entièrement lisibles dans la page, et certains navigateurs bloquent la lecture automatique jusqu'au clic du visiteur. Tout reste hors ligne (l'audio est stocké localement dans la page, sans réseau), mais ne l'utilisez pour rien de sensible.",
+      audioConfirm:"Ajouter la musique (j'ai compris)", audioAdded:"Musique attachée. Enregistrez en HTML pour la conserver.", audioRemoved:"Musique retirée.", audioFail:"Impossible de lire le fichier audio.",
+      audioAttached:"Musique attachée :", audioRemove:"Retirer",
+      saveDesc:"Le HTML conserve la mise en forme et les images ; TXT/MD sont du texte brut.",
+      saveDescMore:"JS, CSS, JSON, XML, CSV et SVG enregistrent le texte actuel comme fichier texte brut avec cette extension (le contenu est le texte de votre document, non converti)."
+    }
+  };
+  Object.keys(I18N).forEach(function(k){ var loc=VG61_I18N[k]||{}, base=VG61_I18N.en; Object.keys(base).forEach(function(key){ I18N[k][key]=(loc[key]!==undefined?loc[key]:base[key]); }); });
 
   var lang="en";
   /* Lookup a localized string by key.
@@ -2813,12 +2913,56 @@
       var dt=ev.dataTransfer; if(!dt||!dt.files||!dt.files.length) return;
       var f=dt.files[0];
       if(/^image\//.test(f.type)){ var r=caretRange(ev.clientX,ev.clientY); addImageFiles(dt.files,r,s); }
+      else if(/^audio\//.test(f.type) || /\.(mp3|ogg|wav|m4a|aac)$/i.test(f.name)){ vgAudioDropped(f); }
       else if(isTextFile(f)){ loadFileAsSource(f); }
       else if(/\.(docx|pdf)$/i.test(f.name)){ showToast("tDocxNo"); }
       else { showToast("tHtmlOnly"); }
     });
   });
   function isTextFile(f){ return /\.(html?|txt|md|js|css|json|xml|csv|svg)$/i.test(f.name) || /^text\//.test(f.type) || f.type===""; }
+
+  /* ============================================================================
+     MODULE: js.fun.audio-embed  (V6.1 — "fun" feature, explicitly not a safety feature)
+     Lets the user drag an audio file (mp3/ogg/wav/...) onto the page. The audio is read
+     as a base64 data URL and kept in memory; when the document is saved as HTML, a small
+     <audio controls> player is embedded so the saved page plays the sound offline.
+     HONEST WARNING (shown to the user): this is a playful extra, NOT a privacy/safety
+     feature. Embedding base64 audio makes the HTML much larger, the audio is fully
+     readable inside the file, and autoplay may be blocked by browsers. It contacts no
+     network — the data URL is local — but it should not be used for sensitive material. */
+  var vgEmbeddedAudio=null; // { name, type, dataUrl }
+  function vgAudioDropped(f){
+    pendingAudioFile=f;
+    // Show the honest warning first; only embed after the user confirms.
+    var info=$("mltAudioInfo");
+    if(info) info.textContent=f.name+" · "+vgHumanBytes(f.size||0);
+    openModal("mltAudioModal");
+  }
+  var pendingAudioFile=null;
+  function vgDoEmbedAudio(){
+    var f=pendingAudioFile; if(!f) return;
+    var r=new FileReader();
+    r.onload=function(){
+      vgEmbeddedAudio={ name:(f.name||"audio"), type:(f.type||"audio/mpeg"), dataUrl:String(r.result||"") };
+      pendingAudioFile=null;
+      closeModal("mltAudioModal");
+      // reflect state in the editor toolbar/status
+      var st=$("mltAudioState"); if(st) st.style.display="inline-flex";
+      var nm=$("mltAudioName"); if(nm) nm.textContent=vgEmbeddedAudio.name;
+      if(typeof vgSetStatus==="function") vgSetStatus(t("audioAdded")||"Audio attached.");
+      showToast("audioAdded");
+    };
+    r.onerror=function(){ closeModal("mltAudioModal"); showToast("audioFail"); };
+    r.readAsDataURL(f);
+  }
+  function vgClearAudio(){
+    vgEmbeddedAudio=null;
+    var st=$("mltAudioState"); if(st) st.style.display="none";
+    if(typeof vgSetStatus==="function") vgSetStatus(t("audioRemoved")||"Audio removed.");
+  }
+  if($("mltAudioConfirm")) $("mltAudioConfirm").addEventListener("click",vgDoEmbedAudio);
+  if($("mltAudioCancel")) $("mltAudioCancel").addEventListener("click",function(){ pendingAudioFile=null; closeModal("mltAudioModal"); });
+  if($("mltAudioRemove")) $("mltAudioRemove").addEventListener("click",vgClearAudio);
 
   /* ====
    MODULE: js.editor.images.resize-align-delete
@@ -2928,10 +3072,18 @@
         '<td style="width:50%;vertical-align:top;padding-right:18px;border-right:1px solid #e4ded0;font-family:'+sheetFont(sheetA,fb)+';">'+sanitizeForExport(sheetA)+'</td>'+
         '<td style="width:50%;vertical-align:top;padding-left:18px;font-family:'+sheetFont(sheetB,fb)+';">'+sanitizeForExport(sheetB)+'</td></tr></table>';
     } else { inner='<div style="font-family:'+sheetFont(sheetA,fb)+';">'+aHtml+'</div>'; }
+    // V6.1: if the user attached audio, embed a small player so the saved page can play it.
+    var audioBlock="";
+    if(vgEmbeddedAudio && vgEmbeddedAudio.dataUrl){
+      audioBlock='<div data-mlt="audio" style="margin:0 auto 18px;max-width:'+maxw+';">'+
+        '<audio controls preload="none" style="width:100%;" src="'+escapeHtml(vgEmbeddedAudio.dataUrl)+'"></audio>'+
+        '<div style="font-size:11px;color:#8a8475;margin-top:4px;">🎵 '+escapeHtml(vgEmbeddedAudio.name)+'</div></div>';
+    }
     return '<!DOCTYPE html>\n<html lang="en"><head><meta charset="utf-8">'+
       '<meta name="viewport" content="width=device-width,initial-scale=1"><title>Document</title>'+
       '<style>img{max-width:100%;height:auto;}</style></head>'+
       '<body style="margin:0;background:#efece4;padding:28px;">'+
+      audioBlock+
       '<div data-mlt="doc" style="max-width:'+maxw+';margin:0 auto;background:#fdfcf6;'+
       'border:1px solid #e4ded0;border-radius:6px;box-shadow:0 8px 30px rgba(60,50,35,.12);'+
       'padding:54px 56px;font-size:'+fs+';line-height:1.85;color:#23201b;">'+inner+'</div></body></html>';
@@ -3101,6 +3253,21 @@
   $("mltSaveAsHtml").addEventListener("click",function(){ downloadBlob(buildHtmlDoc(),"doc_"+stamp()+".html","text/html;charset=utf-8"); closeModal("mltSaveModal"); showToast("tSaved"); });
   $("mltSaveAsTxt").addEventListener("click",function(){ downloadBlob(buildPlainText(),"doc_"+stamp()+".txt","text/plain;charset=utf-8"); closeModal("mltSaveModal"); showToast("tSavedTxt"); });
   $("mltSaveAsMd").addEventListener("click",function(){ downloadBlob(buildMarkdown(),"doc_"+stamp()+".md","text/markdown;charset=utf-8"); closeModal("mltSaveModal"); showToast("tSavedMd"); });
+  // V6.1: also allow saving the current text under common code/data extensions.
+  // The content is the document's plain text; we do not convert/transform it.
+  [["mltSaveAsJs","js","text/javascript;charset=utf-8"],
+   ["mltSaveAsCss","css","text/css;charset=utf-8"],
+   ["mltSaveAsJson","json","application/json;charset=utf-8"],
+   ["mltSaveAsXml","xml","application/xml;charset=utf-8"],
+   ["mltSaveAsCsv","csv","text/csv;charset=utf-8"],
+   ["mltSaveAsSvg","svg","image/svg+xml;charset=utf-8"]
+  ].forEach(function(cfg){
+    var btn=$(cfg[0]); if(!btn) return;
+    btn.addEventListener("click",function(){
+      downloadBlob(buildPlainText(),"doc_"+stamp()+"."+cfg[1],cfg[2]);
+      closeModal("mltSaveModal"); showToast("tSaved");
+    });
+  });
   $("mltSaveCancel").addEventListener("click",function(){ closeModal("mltSaveModal"); });
 
   /* ====
@@ -3638,7 +3805,7 @@
     var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; a.click();
     setTimeout(function(){ URL.revokeObjectURL(a.href); },1000);
   }
-  var VG_VERSION="6.0";
+  var VG_VERSION="6.1";
   function vgSetStatus(msg){ var s=$("mltVgStatus"); if(s) s.innerHTML='<b>Vitalguard-AI V'+VG_VERSION+'</b> · '+msg; }
   function vgHumanBytes(n){ return n<1024?n+" B":(n/1024).toFixed(1)+" KB"; }
   function vgEstimateUltrasoundSeconds(text){
@@ -3950,7 +4117,7 @@
       var summary={name:"Vitalguard-AI document",bytes:toBytes(curText()).length,createdAt:new Date().toISOString(),note:"Manifest only; original content not included."};
       text=JSON.stringify(summary,null,2); bytes=toBytes(text);
     }
-    var pkg=vgMakePackage(v55.payloadMode||"document",text,{mode:v55.payloadMode,createdBy:"Vitalguard-AI V6.0"});
+    var pkg=vgMakePackage(v55.payloadMode||"document",text,{mode:v55.payloadMode,createdBy:"Vitalguard-AI V6.1"});
     v55.lastWizardPkg=pkg;
     return pkg;
   }
@@ -4199,14 +4366,14 @@
    - Add snapshot naming and optional patch export while staying memory-only.
    ==== */
   var VG56_I18N={
-    en:{title:"Vitalguard-AI V6.0 — miniGit, no tracking",subtitle:"Local miniGit · zero-dependency · offline · no tracking",openHint:"Supported open files: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, and images. DOCX/PDF are compressed formats and are not opened offline without external libraries.",tHtmlOnly:"Unsupported file. Supported: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, and images.",tDocxNo:"DOCX/PDF need external libraries because they are compressed formats and are not supported in this offline single-file build. Supported: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, and images. Tip: save as Web Page (.html) or plain text, then open it here.",miniGitBtn:"🧩 miniGit",radioLogBtn:"📻 Emergency Radio",radioTitle:"📻 Radio-style compressed text log",radioDesc:"Use short transparent humanitarian codes for slow ultrasound. The codebook is public and built into this HTML.",radioCodebookTitle:"Codebook quick messages",radioComposeTitle:"Compose",radioPlaceholder:"WATER NEEDED / SAFE / MEDIC NEEDED…",radioRepeatLbl:"Repeat",radioUseDoc:"Use current document text",radioSend:"Send compressed by ultrasound",radioMakeCode:"Create radio code",radioSayAgain:"Say again",radioReceiveTitle:"Decode incoming code",radioDecode:"Decode to log",radioLogTitle:"Memory-only radio log",radioCaveat:"This is not covert military signaling. The codebook is visible, humanitarian, and meant to make slow ultrasound more understandable and reliable.",miniGitTitle:"🧩 miniGit, no tracking",miniGitDesc:"Open, read, search, snapshot, and compare source locally. Snapshots live only in memory and disappear when the page is closed.",miniGitSearchTitle:"Search current source",miniGitSearchPh:"Search text…",miniGitSearchBtn:"Search",miniGitSnapTitle:"Memory snapshots",miniGitSnapBtn:"Save snapshot",miniGitDiffBtn:"Diff current vs latest",miniGitClearBtn:"Clear snapshots",miniGitDiffTitle:"Diff",miniGitCaveat:"miniGit is not GitHub and does not use tracking or persistent storage. Export a TXT/MD/HTML file if you need a durable copy."},
-    ko:{title:"Vitalguard-AI V6.0 — miniGit, no tracking",subtitle:"로컬 miniGit · 무의존성 · 오프라인 · 추적 없음",openHint:"지원 파일: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, 이미지. DOCX/PDF는 압축 형식이라 외부 라이브러리 없이 오프라인에서 열지 않습니다.",tHtmlOnly:"지원하지 않는 파일입니다. 지원: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, 이미지.",tDocxNo:"DOCX/PDF는 압축 형식이라 외부 라이브러리 없이는 이 단일 HTML 오프라인 빌드에서 지원하지 않습니다. 지원: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, 이미지. 팁: 웹 페이지(.html) 또는 일반 텍스트로 저장한 뒤 여세요.",miniGitBtn:"🧩 miniGit",radioLogBtn:"📻 무전 응급 신호",radioTitle:"📻 무전기식 압축 텍스트 로그",radioDesc:"느린 초음파 전송을 위해 짧고 투명한 인도주의 코드북을 사용합니다. 코드북은 이 HTML 안에 공개되어 있습니다.",radioCodebookTitle:"코드북 빠른 메시지",radioComposeTitle:"작성",radioPlaceholder:"WATER NEEDED / SAFE / MEDIC NEEDED…",radioRepeatLbl:"반복",radioUseDoc:"현재 문서 텍스트 사용",radioSend:"압축 메시지를 초음파로 전송",radioMakeCode:"무전기 코드 생성",radioSayAgain:"다시 송신",radioReceiveTitle:"수신 코드 해독",radioDecode:"로그로 해독",radioLogTitle:"메모리 전용 무전기 로그",radioCaveat:"은밀한 군사 신호통신이 아닙니다. 코드북은 공개·인도주의 목적이며, 느린 초음파를 이해하기 쉽고 안정적으로 쓰기 위한 장치입니다.",miniGitTitle:"🧩 miniGit, no tracking",miniGitDesc:"소스를 로컬에서 열고, 읽고, 검색하고, 스냅샷을 만들고, 비교합니다. 스냅샷은 메모리에만 있으며 페이지를 닫으면 사라집니다.",miniGitSearchTitle:"현재 소스 검색",miniGitSearchPh:"검색어…",miniGitSearchBtn:"검색",miniGitSnapTitle:"메모리 스냅샷",miniGitSnapBtn:"스냅샷 저장",miniGitDiffBtn:"현재 vs 최신 비교",miniGitClearBtn:"스냅샷 비우기",miniGitDiffTitle:"Diff",miniGitCaveat:"miniGit은 GitHub가 아니며 추적이나 영구 저장을 하지 않습니다. 오래 보관하려면 TXT/MD/HTML로 내보내세요."}
+    en:{title:"Vitalguard-AI V6.1 — miniGit, no tracking",subtitle:"Local miniGit · zero-dependency · offline · no tracking",openHint:"Supported open files: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, and images. DOCX/PDF are compressed formats and are not opened offline without external libraries.",tHtmlOnly:"Unsupported file. Supported: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, and images.",tDocxNo:"DOCX/PDF need external libraries because they are compressed formats and are not supported in this offline single-file build. Supported: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, and images. Tip: save as Web Page (.html) or plain text, then open it here.",miniGitBtn:"🧩 miniGit",radioLogBtn:"📻 Emergency Radio",radioTitle:"📻 Radio-style compressed text log",radioDesc:"Use short transparent humanitarian codes for slow ultrasound. The codebook is public and built into this HTML.",radioCodebookTitle:"Codebook quick messages",radioComposeTitle:"Compose",radioPlaceholder:"WATER NEEDED / SAFE / MEDIC NEEDED…",radioRepeatLbl:"Repeat",radioUseDoc:"Use current document text",radioSend:"Send compressed by ultrasound",radioMakeCode:"Create radio code",radioSayAgain:"Say again",radioReceiveTitle:"Decode incoming code",radioDecode:"Decode to log",radioLogTitle:"Memory-only radio log",radioCaveat:"This is not covert military signaling. The codebook is visible, humanitarian, and meant to make slow ultrasound more understandable and reliable.",miniGitTitle:"🧩 miniGit, no tracking",miniGitDesc:"Open, read, search, snapshot, and compare source locally. Snapshots live only in memory and disappear when the page is closed.",miniGitSearchTitle:"Search current source",miniGitSearchPh:"Search text…",miniGitSearchBtn:"Search",miniGitSnapTitle:"Memory snapshots",miniGitSnapBtn:"Save snapshot",miniGitDiffBtn:"Diff current vs latest",miniGitClearBtn:"Clear snapshots",miniGitDiffTitle:"Diff",miniGitCaveat:"miniGit is not GitHub and does not use tracking or persistent storage. Export a TXT/MD/HTML file if you need a durable copy."},
+    ko:{title:"Vitalguard-AI V6.1 — miniGit, no tracking",subtitle:"로컬 miniGit · 무의존성 · 오프라인 · 추적 없음",openHint:"지원 파일: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, 이미지. DOCX/PDF는 압축 형식이라 외부 라이브러리 없이 오프라인에서 열지 않습니다.",tHtmlOnly:"지원하지 않는 파일입니다. 지원: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, 이미지.",tDocxNo:"DOCX/PDF는 압축 형식이라 외부 라이브러리 없이는 이 단일 HTML 오프라인 빌드에서 지원하지 않습니다. 지원: HTML, TXT, MD, JS, CSS, JSON, XML, CSV, SVG, 이미지. 팁: 웹 페이지(.html) 또는 일반 텍스트로 저장한 뒤 여세요.",miniGitBtn:"🧩 miniGit",radioLogBtn:"📻 무전 응급 신호",radioTitle:"📻 무전기식 압축 텍스트 로그",radioDesc:"느린 초음파 전송을 위해 짧고 투명한 인도주의 코드북을 사용합니다. 코드북은 이 HTML 안에 공개되어 있습니다.",radioCodebookTitle:"코드북 빠른 메시지",radioComposeTitle:"작성",radioPlaceholder:"WATER NEEDED / SAFE / MEDIC NEEDED…",radioRepeatLbl:"반복",radioUseDoc:"현재 문서 텍스트 사용",radioSend:"압축 메시지를 초음파로 전송",radioMakeCode:"무전기 코드 생성",radioSayAgain:"다시 송신",radioReceiveTitle:"수신 코드 해독",radioDecode:"로그로 해독",radioLogTitle:"메모리 전용 무전기 로그",radioCaveat:"은밀한 군사 신호통신이 아닙니다. 코드북은 공개·인도주의 목적이며, 느린 초음파를 이해하기 쉽고 안정적으로 쓰기 위한 장치입니다.",miniGitTitle:"🧩 miniGit, no tracking",miniGitDesc:"소스를 로컬에서 열고, 읽고, 검색하고, 스냅샷을 만들고, 비교합니다. 스냅샷은 메모리에만 있으며 페이지를 닫으면 사라집니다.",miniGitSearchTitle:"현재 소스 검색",miniGitSearchPh:"검색어…",miniGitSearchBtn:"검색",miniGitSnapTitle:"메모리 스냅샷",miniGitSnapBtn:"스냅샷 저장",miniGitDiffBtn:"현재 vs 최신 비교",miniGitClearBtn:"스냅샷 비우기",miniGitDiffTitle:"Diff",miniGitCaveat:"miniGit은 GitHub가 아니며 추적이나 영구 저장을 하지 않습니다. 오래 보관하려면 TXT/MD/HTML로 내보내세요."}
   };
-  ["ar","zh","ja","es","fr"].forEach(function(k){VG56_I18N[k]=Object.assign({},VG56_I18N.en,{title:"Vitalguard-AI V6.0 — miniGit, no tracking"});});
+  ["ar","zh","ja","es","fr"].forEach(function(k){VG56_I18N[k]=Object.assign({},VG56_I18N.en,{title:"Vitalguard-AI V6.1 — miniGit, no tracking"});});
   Object.keys(I18N).forEach(function(k){var loc=VG56_I18N[k]||VG56_I18N.en;Object.keys(VG56_I18N.en).forEach(function(key){I18N[k][key]=(loc[key]!==undefined?loc[key]:VG56_I18N.en[key]);});});
   var __v56OldApplyLang=applyLang;
   applyLang=function(){__v56OldApplyLang();v56ApplyUiText();};
-  function v56ApplyUiText(){document.title="Vitalguard-AI V6.0 — miniGit, no tracking";var open=$("mltOpen");if(open){open.title=t("openHint");open.setAttribute("aria-label",t("openHint"));}if($("mltGuideOpen"))$("mltGuideOpen").title=t("openHint");if($("mltOpenHint"))$("mltOpenHint").textContent=t("openHint");if($("mltDropHint"))$("mltDropHint").textContent=t("openHint");if($("mltRadioCodebook"))v56RenderCodebook();if($("mltMiniGitSnaps"))v56RenderSnapshots();}
+  function v56ApplyUiText(){document.title="Vitalguard-AI V6.1 — miniGit, no tracking";var open=$("mltOpen");if(open){open.title=t("openHint");open.setAttribute("aria-label",t("openHint"));}if($("mltGuideOpen"))$("mltGuideOpen").title=t("openHint");if($("mltOpenHint"))$("mltOpenHint").textContent=t("openHint");if($("mltDropHint"))$("mltDropHint").textContent=t("openHint");if($("mltRadioCodebook"))v56RenderCodebook();if($("mltMiniGitSnaps"))v56RenderSnapshots();}
   function v56ByteString(bytes){var s="";for(var i=0;i<bytes.length;i++)s+=String.fromCharCode(bytes[i]);return s;}
   function v56BytesToB64(bytes){return btoa(v56ByteString(bytes)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");}
   function v56B64ToBytes(s){s=String(s||"").trim().replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";var bin=atob(s),out=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)out[i]=bin.charCodeAt(i);return out;}
