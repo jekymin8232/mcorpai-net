@@ -14,11 +14,7 @@
 
 
 <script id="vg-guard">
-/* © 2026 Morgan J. (Gyu-min Jeon) | M-Corp Ethical AI — Hippocratic 3.0 derived (civilian/agricultural/humanitarian only).
-   Runtime egress guard. This tool is fully offline and never transmits data. Any attempt to reach an EXTERNAL
-   network target via fetch / XMLHttpRequest / WebSocket / EventSource / sendBeacon is blocked at the moment of
-   transmission and a visible warning is shown — so injected code that tries to exfiltrate data is stopped here.
-   Local actions, Bluetooth (SOS) and audio (ultrasound) are NOT affected. No warning appears during normal use. */
+
 (function(){
   var shown=false;
   function alarm(api){
