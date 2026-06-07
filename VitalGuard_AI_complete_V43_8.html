@@ -1,40 +1,75 @@
 <!--
 
-Even when all other systems stop working, offline AI can save lives.
+Apache 2.0 – Completely Free and Open Source
 
-Offline AI can be applied in any shutdown environment. 
-Its potential use cases extend beyond communication infrastructure failures to include natural-disaster scenarios, remote and disconnected regions, 
-and even AI-assisted solutions for challenges such as desert greening and environmental restoration. 
-This architecture also underwent an initial review by the Government of Luxembourg in November 2025.  
+As an independent open-source developer, I believe that acceptance into the OTF Security Lab would be an important step toward strengthening the security, reliability, 
+and long-term sustainability of this project.
 
-Copyright © 2026 Morgan J. (Gyu-min Jeon) | https://mcorpai.org/ | VitalGuardAI.com V4.3.8
-Given enough eyeballs, all bugs are shallow. — Eric S. Raymond
+I am fully prepared to cooperate with any requests, technical reviews, security assessments, code audits, 
+documentation requirements, or other evaluation processes that may assist reviewers and vendors during the Security Lab assessment.
 
+In real open source, you have the right to control your own destiny. — Linus Torvalds
 
-=========================================================
-Reference:
-https://mcorpai.net   [miniGit, no tracking · Size 186KB]
-=========================================================
+## Experimental Ultrasonic Communication Capability
 
-miniGit is a zero-dependency, memory-only tool designed to eliminate the tracking risks associated with traditional Git platforms. Built specifically for activists, journalists, and users operating in high-risk environments, miniGit is a fully offline source-management tool packed into a single file under 200 KB.
+In addition to the core platform, I have developed an experimental ultrasonic communication capability as a research prototype.
 
-Heavy applications are impractical in high-risk, low-bandwidth scenarios. By staying ultra-lightweight, miniGit ensures rapid deployment.
+However, I recognize that some reviewers and security vendors may prefer to evaluate the core platform independently, 
+without introducing additional communication mechanisms that are outside the primary scope of the current submission.
 
-Unlike GitHub, it requires no server, no account, and leaves no remote commit history. All features are executed locally within the browser, including:
-- Local source-code review & diffing
-- Cryptographic hash verification
-- Static suspicious-code scanning
-- Offline file transfer (via Bluetooth and Ultrasonic FSK communication)
+For this reason, I have intentionally excluded the ultrasonic communication functionality from the version submitted for Security Lab review.
 
-No Server. No Account. No Tracking.
+My objective is to ensure that the evaluation remains focused on the primary architecture, security model, 
+and core capabilities of the platform without introducing unnecessary complexity or uncertainty during the assessment process.
 
-Because all snapshots and histories are strictly in-memory, closing the tab permanently destroys the session data. When combined with Incognito/Private Mode, miniGit is designed to leave zero local traces.
+Depending on reviewer feedback and project requirements, the ultrasonic communication capability could be evaluated separately or incorporated into future versions. 
+If reviewers determine that such functionality is outside the desired scope, I would be fully willing to keep it excluded from future releases.
 
-License: M-Corp Ethical AI License (Hippocratic 3.0 derived). Strictly restricted to civilian, agricultural, and humanitarian purposes. 
+## Background
 
-Note: miniGit is a research prototype and is not a guaranteed forensic eraser. Please check mcorpai.net for more details.
+While Chrome supports Bluetooth communication through the Web Bluetooth API, Safari currently does not provide equivalent support.
 
-miniGit demonstrates that a highly practical, secure source-management tool can be built entirely without external dependencies.
+As part of my research into infrastructure-independent communication methods, 
+I developed an experimental ultrasonic communication capability that can serve as an alternative short-range communication channel 
+when conventional browser-based Bluetooth functionality is unavailable.
+
+The prototype is designed for highly localized communication between nearby devices and supports multiple signaling approaches, including Morse-code-based signaling, 
+compact numeric signaling, and customizable user-defined encoding schemes.
+
+The primary objective of this research is not anonymity or guaranteed security, which no communication technology can provide, 
+but rather the exploration of infrastructure-independent communication methods that reduce reliance on conventional networking technologies and external services.
+
+A demonstration of this research prototype can be found at:
+
+Ultrasonic Communication MVP
+
+For reference:
+
+https://mcorpai.net/
+
+## Security Lab Submission Scope
+
+The ultrasonic communication capability is intentionally excluded from the current submission 
+because it represents an experimental and relatively unconventional communication mechanism.
+
+My concern was that including an additional research component at this stage could complicate the review process 
+or divert attention from the core platform itself.
+
+To avoid any possibility that the assessment of the primary architecture might be influenced by an unrelated experimental feature, 
+I chose to focus this submission exclusively on the core platform and its primary functionality.
+
+Should there be interest in reviewing the ultrasonic communication capability in the future, it can be evaluated independently as a separate research component.
+
+## Closing
+
+I would be sincerely grateful for the opportunity to have this project undergo a professional Security Review through the OTF Security Lab.
+
+A significant amount of time, effort, and personal commitment has gone into the development of this project. 
+Independent security review and expert feedback would be invaluable in helping improve its quality, 
+security posture, and long-term usefulness for the communities it aims to serve.
+
+My goal is to build a project that remains free, open, transparent, sustainable, 
+and independent while providing practical value to users operating in challenging environments.
 
 -->
 
