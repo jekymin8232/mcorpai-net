@@ -1,5 +1,3 @@
-Large language models (LLMs) require substantial investments in servers, computing infrastructure, and ongoing operational costs. In contrast, investing directly in talented individuals is a far more cost-effective approach, with the potential to deliver a higher probability of success.
-
 # VitalGuard
 
 **Constraint-Based Ethical Design for Ultra-Lightweight Offline AI in Humanitarian Contexts**
@@ -85,3 +83,8 @@ Ten design principles, derived from GDPR, UNCRC, and CRPD, are each mapped to a 
 - *Basic health screening* — symptom checklist with a Naïve Bayes three-level risk category (Low / Medium / High). This is a screening tool, not a diagnostic instrument.
 
 **Reproducibility checklist.** Independent reviewers can verify: file size, offline operation (e.g. airplane mode), absence of network APIs, absence of persistent storage writes, and deterministic algorithmic pathways.
+
+---
+
+Large language models (LLMs) require substantial investments in servers, computing infrastructure, and ongoing operational costs. In contrast, investing directly in talented individuals is a far more cost-effective approach, with the potential to deliver a higher probability of success.
+
